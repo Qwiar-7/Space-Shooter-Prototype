@@ -4,29 +4,31 @@ using UnityEngine;
 
 public class Hero : MonoBehaviour
 {
-    static public Hero S;
+    static public Hero heroObj;
+    static Dictionary<WeaponType, WeaponDefinition> WeaponDictionary;
 
     [Header("Set in Inspector")]
     public float speed = 30;
-    public float rollMult = -45;
-    public float pitchMult = 30;
+    public float rollMultiplier = -45;
+    public float pitchMultiplier = 30;
     public float gameRestartDelay = 2f; //время до перезапуска
     public GameObject projectilePrefab;
     public float projectileSpeed = 40;
     public Weapon[] weapons;
+    public WeaponDefinition[] weaponDefinitions;
 
     [Header("Set Dynamically")]
     [SerializeField]
     private float _shieldLevel = 4;
 
-    private GameObject lastTriggerGo = null;
+    private GameObject lastTriggeredGameObj = null;
 
     // Объявление нового делегата типа WeaponFireDelegate
     public delegate void WeaponFireDelegate();
     // Создать поле типа WeaponFireDelegate с именем fireDelegate.
     public WeaponFireDelegate fireDelegate;
 
-    public float shieldLevel
+    public float ShieldLevel
     {
         get {  return _shieldLevel; }
         set
@@ -35,15 +37,24 @@ public class Hero : MonoBehaviour
             if (value < 0)
             {
                 Destroy(this.gameObject);
-                Main.S.DelayedRestart(gameRestartDelay);
+                Main.mainObj.DelayedRestart(gameRestartDelay);
             }
         }
     }
 
+    private void Awake()
+    {
+        // Словарь с ключами типа WeaponType
+        WeaponDictionary = new Dictionary<WeaponType, WeaponDefinition>();
+        foreach (WeaponDefinition weapontDef in weaponDefinitions)
+        {
+            WeaponDictionary[weapontDef.type] = weapontDef;
+        }
+    }
     private void Start()
     {
-        if (S == null)
-            S = this;
+        if (heroObj == null)
+            heroObj = this;
         else
             Debug.LogError("Hero.Awake() - Попытка создать 2-ой экземпляр Hero.S!");
         //fireDelegate += TempFire;
@@ -56,12 +67,11 @@ public class Hero : MonoBehaviour
         float xAxis = Input.GetAxis("Horizontal");
         float yAxis = Input.GetAxis("Vertical");
 
-        Vector3 pos = transform.position;
-        pos.x += xAxis * speed * Time.deltaTime;
-        pos.y += yAxis * speed * Time.deltaTime;
-        transform.position = pos;
-
-        transform.rotation = Quaternion.Euler(yAxis * pitchMult, xAxis * rollMult, 0);
+        Vector3 position = transform.position;
+        position.x += xAxis * speed * Time.deltaTime;
+        position.y += yAxis * speed * Time.deltaTime;
+        
+        transform.SetPositionAndRotation(position, Quaternion.Euler(yAxis * pitchMultiplier, xAxis * rollMultiplier, 0));
 
         //if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0))
 
@@ -73,50 +83,74 @@ public class Hero : MonoBehaviour
             fireDelegate();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider otherGO)
     {
-        Transform rootT = other.gameObject.transform.root;
-        GameObject go = rootT.gameObject;
+        Transform rootTransform = otherGO.gameObject.transform.root;
+        GameObject gameObj = rootTransform.gameObject;
 
-        if (go == lastTriggerGo) return;
+        if (gameObj == lastTriggeredGameObj) return;
 
-        lastTriggerGo = go;
+        lastTriggeredGameObj = gameObj;
 
-        if (go.tag == "Enemy")
+        if (gameObj.CompareTag("Enemy"))
         {
-            shieldLevel--;
-            Destroy(go);
+            ShieldLevel--;
+            Destroy(gameObj);
         }
-        else if (go.tag == "PowerUp")
-            AbsorbPowerUp(go);
+        else if (gameObj.CompareTag("PowerUp"))
+            AbsorbPowerUp(gameObj);
         else
-            print("Triggered by non-Enemy: " + go.name);
+            print("Triggered by non-Enemy: " + gameObj.name);
     }
 
-    public void AbsorbPowerUp (GameObject go)
+    /// <summary>
+    /// Статистическая функцияб возвращающая WeaponDefinition из статистического
+    /// защищенного поля WEAP_DICT класса Main.
+    /// </summary>
+    /// <param name="type">Тип оружия WeaponType, для которого требуется получить WeaponDefinition</param>
+    /// <returns>Экземпляр WeaponDefinition или, если нет такого определения
+    /// для указанного WeaponType, возвращает новый экземпляр WeaponDefinition
+    /// с типом none.</returns>
+    static public WeaponDefinition GetWeaponDefinition(WeaponType type)
     {
-        PowerUp pu = go.GetComponent<PowerUp>();
-        switch (pu.type)
+        // Проверить наличие указанного ключа в словаре
+        // Попытка извлечь значение по отсутствующему ключу вызовет ошибку,
+        // поэтому следующая инструкция играет важную роль.
+        if (WeaponDictionary.ContainsKey(type))
+        {
+            return WeaponDictionary[type];
+        }
+
+        // Следующая инструкция возвращает новый экземпляр WeaponDefinition
+        // с типом оружия WeaponType.nоnе, что означает неудачную попытку
+        // найти требуемое определение WeaponDefinition
+        return new WeaponDefinition();
+    }
+
+    public void AbsorbPowerUp (GameObject gameObj)
+    {
+        PowerUp powerUp = gameObj.GetComponent<PowerUp>();
+        switch (powerUp.type)
         {
             case WeaponType.shield:
-                shieldLevel++;
+                ShieldLevel++;
                 break;
             default:
-                if (pu.type == weapons[0].type)
+                if (powerUp.type == weapons[0].type)
                 {
-                    Weapon w = GetEmptyWeaponSlot();
-                    if (w != null)
-                    { w.SetType(pu.type); }
+                    Weapon weapon = GetEmptyWeaponSlot();
+                    if (weapon != null)
+                    { weapon.SetType(powerUp.type); }
                 }
                 else
                 {
                     ClearWeapons();
-                    weapons[0].SetType(pu.type);
+                    weapons[0].SetType(powerUp.type);
                 }
                 
                 break;
         }
-        pu.AbsorbedBy(this.gameObject);
+        powerUp.AbsorbedBy(this.gameObject);
     }
 
     Weapon GetEmptyWeaponSlot()
@@ -131,7 +165,7 @@ public class Hero : MonoBehaviour
 
     void ClearWeapons()
     {
-        foreach (Weapon w in weapons)
-        { w.SetType(WeaponType.none);}
+        foreach (Weapon weapon in weapons)
+        { weapon.SetType(WeaponType.none);}
     }
 }

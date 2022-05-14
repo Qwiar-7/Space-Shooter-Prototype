@@ -345,8 +345,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96a4bf08ad2e1df4792fd303964dfa19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 1
-  def:
+  type: 0
+  weaponDef:
     type: 0
     letter: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -596,8 +596,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96a4bf08ad2e1df4792fd303964dfa19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 1
-  def:
+  type: 0
+  weaponDef:
     type: 0
     letter: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -996,37 +996,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabEnemies:
-  - {fileID: 9004591264114036330, guid: 6b57c690f80a76a4eb64927bfb0c8fdb, type: 3}
+  - {fileID: 5420625870032263103, guid: 13f79c98a3fb2644388b23d45aa74fd1, type: 3}
   enemySpawnPerSecond: 0.6
   enemyDefaultPadding: 1.5
-  weaponDefinitions:
-  - type: 1
-    letter: B
-    color: {r: 1, g: 1, b: 1, a: 1}
-    projectilePrefab: {fileID: 5500788920637927441, guid: 55511ebadbc320a42b66d283ac9bd523, type: 3}
-    projectileColor: {r: 1, g: 1, b: 1, a: 1}
-    damageOnHit: 1
-    continuousDamage: 0
-    delayBetweenShots: 0.2
-    velocity: 50
-  - type: 2
-    letter: S
-    color: {r: 1, g: 0, b: 0, a: 1}
-    projectilePrefab: {fileID: 5500788920637927441, guid: 55511ebadbc320a42b66d283ac9bd523, type: 3}
-    projectileColor: {r: 1, g: 0, b: 0, a: 1}
-    damageOnHit: 1
-    continuousDamage: 0
-    delayBetweenShots: 0.4
-    velocity: 50
-  - type: 6
-    letter: O
-    color: {r: 0, g: 0.5882353, b: 0, a: 1}
-    projectilePrefab: {fileID: 0}
-    projectileColor: {r: 0, g: 0.5882353, b: 0, a: 1}
-    damageOnHit: 0
-    continuousDamage: 0
-    delayBetweenShots: 0
-    velocity: 0
   prefabPowerUp: {fileID: 7094129368567732144, guid: 7ccf526534f173b448c6b86ba6bda7d9, type: 3}
   powerUpFrequency: 01000000010000000200000006000000
 --- !u!114 &963194230
@@ -1044,8 +1016,8 @@ MonoBehaviour:
   radius: 1
   keepOnScreen: 0
   isOnScreen: 1
-  camWidth: 0
-  camHeight: 0
+  cameraWidth: 0
+  cameraHeight: 0
   offRight: 0
   offLeft: 0
   offUp: 0
@@ -1570,7 +1542,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationPerSecond: 0.1
-  levelShown: 0
+  visibleShieldLevel: 0
 --- !u!23 &1286829077
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1854,8 +1826,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96a4bf08ad2e1df4792fd303964dfa19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 1
-  def:
+  type: 0
+  weaponDef:
     type: 0
     letter: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -1912,8 +1884,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96a4bf08ad2e1df4792fd303964dfa19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 1
-  def:
+  type: 0
+  weaponDef:
     type: 0
     letter: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -1970,8 +1942,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96a4bf08ad2e1df4792fd303964dfa19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 1
-  def:
+  type: 0
+  weaponDef:
     type: 0
     letter: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -2303,8 +2275,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 30
-  rollMult: -45
-  pitchMult: 30
+  rollMultiplier: -45
+  pitchMultiplier: 30
   gameRestartDelay: 2
   projectilePrefab: {fileID: 5500788920637927441, guid: 55511ebadbc320a42b66d283ac9bd523, type: 3}
   projectileSpeed: 40
@@ -2314,6 +2286,34 @@ MonoBehaviour:
   - {fileID: 1414484249}
   - {fileID: 547086129}
   - {fileID: 1485400231}
+  weaponDefinitions:
+  - type: 6
+    letter: O
+    color: {r: 0, g: 0.64705884, b: 0, a: 1}
+    projectilePrefab: {fileID: 0}
+    projectileColor: {r: 0, g: 0.64705884, b: 0, a: 1}
+    damageOnHit: 0
+    continuousDamage: 0
+    delayBetweenShots: 0
+    velocity: 0
+  - type: 1
+    letter: B
+    color: {r: 1, g: 1, b: 1, a: 1}
+    projectilePrefab: {fileID: 5500788920637927441, guid: 55511ebadbc320a42b66d283ac9bd523, type: 3}
+    projectileColor: {r: 1, g: 1, b: 1, a: 1}
+    damageOnHit: 1
+    continuousDamage: 0
+    delayBetweenShots: 0.2
+    velocity: 50
+  - type: 2
+    letter: S
+    color: {r: 1, g: 0, b: 0, a: 1}
+    projectilePrefab: {fileID: 5500788920637927441, guid: 55511ebadbc320a42b66d283ac9bd523, type: 3}
+    projectileColor: {r: 1, g: 0, b: 0, a: 1}
+    damageOnHit: 1
+    continuousDamage: 0
+    delayBetweenShots: 0.4
+    velocity: 50
   _shieldLevel: 4
 --- !u!4 &1821439378
 Transform:
@@ -2349,11 +2349,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b3bb2f9062687c49b8b122f6d0c1c81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 4
+  radius: -4
   keepOnScreen: 1
   isOnScreen: 1
-  camWidth: 0
-  camHeight: 0
+  cameraWidth: 0
+  cameraHeight: 0
   offRight: 0
   offLeft: 0
   offUp: 0

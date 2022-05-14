@@ -15,42 +15,42 @@ public class BoundsCheck : MonoBehaviour
 
     [Header("Set Dynamically")]
     public bool isOnScreen = true;
-    public float camWidth;
-    public float camHeight;
+    public float cameraWidth;
+    public float cameraHeight;
 
     [HideInInspector]
     public bool offRight, offLeft, offUp, offDown;
 
     private void Awake()
     {
-        camHeight = Camera.main.orthographicSize;
-        camWidth = camHeight * Camera.main.aspect;
+        cameraHeight = Camera.main.orthographicSize;
+        cameraWidth = cameraHeight * Camera.main.aspect;
     }
 
     private void LateUpdate()
     {
-        Vector3 pos = transform.position;
+        Vector3 position = transform.position;
         isOnScreen = true;
         offRight = offLeft = offUp = offDown = false;
 
-        if (pos.x >  camWidth - radius)
+        if (position.x >  cameraWidth + radius)
         {
-            pos.x = camWidth - radius;
+            position.x = cameraWidth + radius;
             offRight = true;
         }
-        if (pos.x < -camWidth +  radius)
+        if (position.x < -cameraWidth -  radius)
         {
-            pos.x = -camWidth + radius;
+            position.x = -cameraWidth - radius;
             offLeft = true;
         }
-        if (pos.y > camHeight - radius)
+        if (position.y > cameraHeight + radius)
         {
-            pos.y = camHeight - radius;
+            position.y = cameraHeight + radius;
             offUp = true;
         }
-        if (pos.y < -camHeight + radius)
+        if (position.y < -cameraHeight - radius)
         {
-            pos.y = -camHeight + radius;
+            position.y = -cameraHeight - radius;
             offDown = true;
         }
 
@@ -58,7 +58,7 @@ public class BoundsCheck : MonoBehaviour
         //если keepOnScreen = true оставить объект в пределах экрана
         if (keepOnScreen && !isOnScreen)
         {
-            transform.position = pos;
+            transform.position = position;
             isOnScreen = true;
             offRight = offLeft = offUp = offDown = false;
         }
@@ -67,7 +67,7 @@ public class BoundsCheck : MonoBehaviour
     private void OnDrawGizmos()
     {
         if (!Application.isPlaying) return;
-        Vector3 boundSize = new Vector3(camWidth*2, camHeight*2, 0.1f);
+        Vector3 boundSize = new Vector3(cameraWidth*2, cameraHeight*2, 0.1f);
         Gizmos.DrawWireCube(Vector3.zero, boundSize);
     }
 }

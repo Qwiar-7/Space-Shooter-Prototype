@@ -18,24 +18,24 @@ public class Enemy_3 : Enemy
         points = new Vector3[3];
 
         // Начальная позиция уже определена в Main.SpawnEnemy()
-        points[0] = pos;
+        points[0] = Position;
 
         // Установить xMin и хМах так же, как это делает Main.SpawnEnemy()
-        float xMin = -bndCheck.camWidth + bndCheck.radius;
-        float xMax = bndCheck.camWidth - bndCheck.radius;
+        float xMin = -boundsCheck.cameraWidth + boundsCheck.radius;
+        float xMax = boundsCheck.cameraWidth - boundsCheck.radius;
 
-        Vector3 v;
+        Vector3 tempPos;
         // Случайно выбрать среднюю точку ниже нижней границы экрана
-        v = Vector3.zero;
-        v.x = Random.Range(xMax, xMax);
-        v.y = -bndCheck.camHeight * Random.Range(2.75f, 2);
-        points[1] = v;
+        tempPos = Vector3.zero;
+        tempPos.x = Random.Range(xMin, xMax);
+        tempPos.y = -boundsCheck.cameraHeight * Random.Range(2.75f, 2);
+        points[1] = tempPos;
 
         // Случайно выбрать конечную точку выше верхней границы экрана
-        v = Vector3.zero;
-        v.y = pos.y;
-        v.x = Random.Range(xMax, xMax);
-        points[2] = v;
+        tempPos = Vector3.zero;
+        tempPos.y = Position.y;
+        tempPos.x = Random.Range(xMin, xMax);
+        points[2] = tempPos;
 
         birthTime = Time.time;
     }
@@ -51,10 +51,10 @@ public class Enemy_3 : Enemy
         }
 
         // Интерполировать кривую Безье по трем точкам
-        Vector3 p01, p12;
-        u = u - 0.2f * Mathf.Sin(u * Mathf.PI * 2);
-        p01 = (1 - u) * points[0] + u * points[1];
-        p12 = (1 - u) * points[1] + u * points[2];
-        pos = (1 - u) * p01 + u * p12;
+        Vector3 pos01, pos12;
+        u -= 0.2f * Mathf.Sin(u * Mathf.PI * 2);
+        pos01 = (1 - u) * points[0] + u * points[1];
+        pos12 = (1 - u) * points[1] + u * points[2];
+        Position = (1 - u) * pos01 + u * pos12;
     }
 }

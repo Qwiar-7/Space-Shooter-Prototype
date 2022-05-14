@@ -16,8 +16,8 @@ GameObject:
   - component: {fileID: 5500788920637927442}
   - component: {fileID: 8672031017454571920}
   m_Layer: 10
-  m_Name: ProjectileHero
-  m_TagString: ProjectileHero
+  m_Name: Projectile
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rigid: {fileID: 0}
-  _type: 0
+  type: 0
 --- !u!114 &8672031017454571920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,8 +143,8 @@ MonoBehaviour:
   radius: -1
   keepOnScreen: 0
   isOnScreen: 1
-  camWidth: 0
-  camHeight: 0
+  cameraWidth: 0
+  cameraHeight: 0
   offRight: 0
   offLeft: 0
   offUp: 0

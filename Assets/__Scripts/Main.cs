@@ -1,60 +1,50 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Main : MonoBehaviour
 {
-    static public Main S;
-    static Dictionary<WeaponType, WeaponDefinition> WEAP_DICT;
+    static public Main mainObj;
 
     [Header("Set in Inspector")]
     public GameObject[] prefabEnemies;
     public float enemySpawnPerSecond = 0.5f;    //количество врагов в секунду
     public float enemyDefaultPadding = 1.5f;    //отступ от верхнего края
-    public WeaponDefinition[] weaponDefinitions;
     public GameObject prefabPowerUp;
     public WeaponType[] powerUpFrequency = new WeaponType[] { WeaponType.blaster,
         WeaponType.blaster, WeaponType.spread, WeaponType.shield };
 
-    private BoundsCheck bndCheck;
+    private BoundsCheck boundsCheck;
 
     private void Awake()
     {
-        S = this;
-        bndCheck = GetComponent<BoundsCheck>();
-        Invoke ("SpawnEnemy", 1f/enemySpawnPerSecond);  //время до появления первого врага
-
-        // Словарь с ключами типа WeaponType
-        WEAP_DICT = new Dictionary<WeaponType, WeaponDefinition>();
-        foreach (WeaponDefinition def in weaponDefinitions)
-        {
-            WEAP_DICT[def.type] = def;
-        }
+        mainObj = this;
+        boundsCheck = GetComponent<BoundsCheck>();
+        Invoke (nameof(SpawnEnemy), 1f/enemySpawnPerSecond);  //время до появления первого врага
     }
 
     public void SpawnEnemy()
     {
-        int ndx = Random.Range(0, prefabEnemies.Length);
-        GameObject go = Instantiate<GameObject> (prefabEnemies[ndx]);
+        int index = Random.Range(0, prefabEnemies.Length);
+        GameObject gameObj = Instantiate<GameObject> (prefabEnemies[index]);
 
         float enemyPadding = enemyDefaultPadding;
-        if (go.GetComponent<BoundsCheck>() != null)
-            enemyPadding = Mathf.Abs(go.GetComponent<BoundsCheck>().radius);//?????????????абсолютное радиус с -
+        if (gameObj.GetComponent<BoundsCheck>() != null)
+            enemyPadding = Mathf.Abs(gameObj.GetComponent<BoundsCheck>().radius);//?????????????абсолютное радиус с -
 
-        Vector3 pos = Vector3.zero;
-        float xMin = -bndCheck.camWidth + enemyPadding;
-        float xMax = bndCheck.camWidth - enemyPadding;
-        pos.x = Random.Range(xMin, xMax);
-        pos.y = bndCheck.camHeight + enemyPadding;
-        go.transform.position = pos;
+        Vector3 position = Vector3.zero;
+        float xMin = -boundsCheck.cameraWidth + enemyPadding;
+        float xMax = boundsCheck.cameraWidth - enemyPadding;
+        position.x = Random.Range(xMin, xMax);
+        position.y = boundsCheck.cameraHeight + enemyPadding;
+        gameObj.transform.position = position;
 
-        Invoke("SpawnEnemy", 1f / enemySpawnPerSecond);
+        Invoke(nameof(SpawnEnemy), 1f / enemySpawnPerSecond);
     }
 
     public void DelayedRestart ( float delay )
     {
-        Invoke("Restart", delay);
+        Invoke(nameof(Restart), delay);
     }
 
     public void Restart()
@@ -62,46 +52,22 @@ public class Main : MonoBehaviour
         SceneManager.LoadScene("SampleScene");
     }
 
-    /// <summary>
-    /// Статистическая функцияб возвращающая WeaponDefinition из статистического
-    /// защищенного поля WEAP_DICT класса Main.
-    /// </summary>
-    /// <param name="wt">Тип оружия WeaponType, для которого требуется получить WeaponDefinition</param>
-    /// <returns>Экземпляр WeaponDefinition или, если нет такого определения
-    /// для указанного WeaponType, возвращает новый экземпляр WeaponDefinition
-    /// с типом none.</returns>
-    static public WeaponDefinition GetWeaponDefinition (WeaponType wt)
+    public void ShipDestroyed(Enemy enemy)
     {
-        // Проверить наличие указанного ключа в словаре
-        // Попытка извлечь значение по отсутствующему ключу вызовет ошибку,
-        // поэтому следующая инструкция играет важную роль.
-        if (WEAP_DICT.ContainsKey(wt))
-        {
-            return WEAP_DICT[wt];
-        }
-
-        // Следующая инструкция возвращает новый экземпляр WeaponDefinition
-        // с типом оружия WeaponType.nоnе, что означает неудачную попытку
-        // найти требуемое определение WeaponDefinition
-        return new WeaponDefinition();
-    }
-
-    public void ShipDestroyed(Enemy e)
-    {
-        if (Random.value <= e.powerUpDropChance)
+        if (Random.value <= enemy.powerUpDropChance)
         {
             // Выбрать тип бонуса
             // Выбрать один из элементов в powerUpFrequency
-            int ndx = Random.Range(0,powerUpFrequency.Length);
-            WeaponType puType = powerUpFrequency[ndx];
+            int index = Random.Range(0,powerUpFrequency.Length);
+            WeaponType powerUpType = powerUpFrequency[index];
 
             // Создать экземпляр PowerUp
-            GameObject go = Instantiate ( prefabPowerUp) as GameObject;
-            PowerUp pu = go.GetComponent<PowerUp>();
+            GameObject gameObj = Instantiate (prefabPowerUp);
+            PowerUp powerUp = gameObj.GetComponent<PowerUp>();
             // Установить соответствующий тип WeaponType
-            pu.SetType(puType);
+            powerUp.SetType(powerUpType);
             // Поместить в место, где находился разрушенный корабль
-            pu.transform.position = e.transform.position;
+            powerUp.transform.position = enemy.transform.position;
         }
     }
 }

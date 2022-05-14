@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PowerUp : MonoBehaviour
@@ -8,7 +6,7 @@ public class PowerUp : MonoBehaviour
     // Необычное, но удобное применение Vector2. х хранит минимальное
     // значение, а у - максимальное значение для метода Random.Range(),
     // который будет вызываться позже
-    public Vector2 rotMinMax = new Vector2(15, 90);
+    public Vector2 rotationMinMax = new Vector2(15, 90);
     public Vector2 driftMinMax = new Vector2(.25f, 2);
     public float lifeTime = 6f;  // Время в секундах существования PowerUp
     public float fadeTime = 4f;
@@ -17,20 +15,20 @@ public class PowerUp : MonoBehaviour
     public WeaponType type;
     public GameObject cube;
     public TextMesh letter;
-    public Vector3 rotPerSecond; // Скорость вращения
+    public Vector3 rotationPerSecond; // Скорость вращения
     public float birthTime;
 
     private Rigidbody rigid;
-    private BoundsCheck bndCheck;
-    private Renderer cubeRend;
+    private BoundsCheck boundsCheck;
+    private Renderer cubeRenderer;
 
     private void Awake()
     {
         cube = transform.Find("Cube").gameObject;
         letter = GetComponent<TextMesh>();
         rigid = GetComponent<Rigidbody>();
-        bndCheck = GetComponent<BoundsCheck>();
-        cubeRend = cube.GetComponent<Renderer>();
+        boundsCheck = GetComponent<BoundsCheck>();
+        cubeRenderer = cube.GetComponent<Renderer>();
 
         // Выбрать случайную скорость
         Vector3 vel = Random.onUnitSphere; // Random.onUnitSphere возвращает вектор, указывающий на случайную
@@ -46,15 +44,15 @@ public class PowerUp : MonoBehaviour
 
         // Выбрать случайную скорость вращения для вложенного куба с
         // использованием rotMinMax.x и rotMinMax.y
-        rotPerSecond = new Vector3(Random.Range(rotMinMax.x, rotMinMax.y),
-            Random.Range(rotMinMax.x, rotMinMax.y), Random.Range(rotMinMax.x, rotMinMax.y));
+        rotationPerSecond = new Vector3(Random.Range(rotationMinMax.x, rotationMinMax.y),
+            Random.Range(rotationMinMax.x, rotationMinMax.y), Random.Range(rotationMinMax.x, rotationMinMax.y));
 
         birthTime = Time.time;
     }
 
     private void Update()
     {
-        cube.transform.rotation = Quaternion.Euler(rotPerSecond * Time.time);
+        cube.transform.rotation = Quaternion.Euler(rotationPerSecond * Time.time);
 
         // Эффект растворения куба PowerUp с течением времени
         // Со значениями по умолчанию бонус существует 10 секунд
@@ -71,28 +69,28 @@ public class PowerUp : MonoBehaviour
 
         if (u > 0)
         {
-            Color c = cubeRend.material.color;
-            c.a = 1f - u;
-            cubeRend.material.color = c;
+            Color color = cubeRenderer.material.color;
+            color.a = 1f - u;
+            cubeRenderer.material.color = color;
             // Буква тоже должна растворяться, но медленнее
-            c = letter.color;
-            c.a = 1f - (u * 0.5f);
-            letter.color = c;
+            color = letter.color;
+            color.a = 1f - (u * 0.5f);
+            letter.color = color;
         }
 
-        if (!bndCheck.isOnScreen)
+        if (!boundsCheck.isOnScreen)
             Destroy(gameObject);
     }
 
-    public void SetType (WeaponType wt)
+    public void SetType (WeaponType type)
     {
         // Получить WeaponDefinition из Main
-        WeaponDefinition def = Main.GetWeaponDefinition(wt);
+        WeaponDefinition weaponDef = Hero.GetWeaponDefinition(type);
         // Установить цвет дочернего куба
-        cubeRend.material.color = def.color;
+        cubeRenderer.material.color = weaponDef.color;
         //letter.color = def.color;
-        letter.text = def.letter;
-        type = wt; // В заключение установить фактический тип
+        letter.text = weaponDef.letter;
+        this.type = type; // В заключение установить фактический тип
     }
 
     public void AbsorbedBy (GameObject target)

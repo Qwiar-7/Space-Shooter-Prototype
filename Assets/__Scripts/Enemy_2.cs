@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy_2 : Enemy
@@ -12,27 +10,27 @@ public class Enemy_2 : Enemy
     [Header("Set Dynamically: Enemy_2")]
     // Enemy_2 использует линейную интерполяцию между двумя точками,
     // изменяя результат по синусоиде
-    public Vector3 p0;
-    public Vector3 p1;
+    public Vector3 pos0;
+    public Vector3 pos1;
     public float birthTime;
 
     private void Start()
     {
         // Выбрать случайную точку на левой границе экрана
-        p0 = Vector3.zero;
-        p0.x = -bndCheck.camWidth - bndCheck.radius;
-        p0.y = Random.Range(-bndCheck.camHeight, bndCheck.camHeight);
+        pos0 = Vector3.zero;
+        pos0.x = -boundsCheck.cameraWidth - boundsCheck.radius;
+        pos0.y = Random.Range(-boundsCheck.cameraHeight, boundsCheck.cameraHeight);
 
         // Выбрать случайную точку на правой границе экрана
-        p1 = Vector3.zero;
-        p1.x = bndCheck.camWidth + bndCheck.radius;
-        p1.y = Random.Range(-bndCheck.camHeight, bndCheck.camHeight);
+        pos1 = Vector3.zero;
+        pos1.x = boundsCheck.cameraWidth + boundsCheck.radius;
+        pos1.y = Random.Range(-boundsCheck.cameraHeight, boundsCheck.cameraHeight);
 
         // Случайно поменять начальную и конечную точку местами
         if (Random.value > 0.5f)
         {
-            p0.x *= -1;
-            p1.x *= -1;
+            pos0.x *= -1;
+            pos1.x *= -1;
         }
 
         birthTime = Time.time;
@@ -49,8 +47,8 @@ public class Enemy_2 : Enemy
             return;
         }
 
-        u = u + sinEccentricity * (Mathf.Sin(u * Mathf.PI * 2)); //для ослабления эффекта замедления
+        u += sinEccentricity * (Mathf.Sin(u * Mathf.PI * 2)); //для ослабления эффекта замедления
 
-        pos = (1 - u) * p0 + u * p1;
+        Position = (1 - u) * pos0 + u * pos1;
     }
 }

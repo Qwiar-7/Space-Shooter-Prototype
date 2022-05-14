@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -19,9 +17,9 @@ public class Enemy : MonoBehaviour
     public float damageDoneTime; // Время прекращения отображения эффекта
     public bool notifiedOfDestruction = false;
 
-    protected BoundsCheck bndCheck;
+    protected BoundsCheck boundsCheck;
 
-    public Vector3 pos
+    public Vector3 Position
     {
         get {  return this.transform.position; }
         set {  this.transform.position = value; }
@@ -29,9 +27,9 @@ public class Enemy : MonoBehaviour
 
     private void Awake()
     {
-        bndCheck = GetComponent<BoundsCheck>();
+        boundsCheck = GetComponent<BoundsCheck>();
         // Получить материалы и цвет этого игрового объекта и его потомков
-        materials = Utils.GetAllMaterials( gameObject );
+        materials = Utils.GetAllMaterials(gameObject);
         originalColors = new Color[materials.Length];
         for (int i = 0; i < materials.Length; i++)
         {
@@ -48,7 +46,7 @@ public class Enemy : MonoBehaviour
             UnShowDamage();
         }
 
-        if (bndCheck != null && bndCheck.offDown)
+        if (boundsCheck != null && boundsCheck.offDown)
         {
                 Destroy(gameObject);
         }
@@ -60,10 +58,10 @@ public class Enemy : MonoBehaviour
         switch (otherGO.tag)
         {
             case "ProjectileHero":
-                Projectile p = otherGO.GetComponent<Projectile>();
+                Projectile projectile = otherGO.GetComponent<Projectile>();
                 // Если вражеский корабль за границами экрана,
                 // не наносить ему повреждений.
-                if (!bndCheck.isOnScreen)
+                if (!boundsCheck.isOnScreen)
                 {
                     Destroy(otherGO);
                     break;
@@ -72,12 +70,12 @@ public class Enemy : MonoBehaviour
                 // Поразить вражеский корабль
                 ShowDamage();
                 // Получить разрушающую силу из WEAP_DICT в классе Main,
-                health -= Main.GetWeaponDefinition(p.type).damageOnHit;
+                health -= Hero.GetWeaponDefinition(projectile.Type).damageOnHit;
                 if (health <= 0)
                 {
                     // Сообщить объекту-одиночке Main об уничтожении
                     if (!notifiedOfDestruction)
-                        Main.S.ShipDestroyed(this);
+                        Main.mainObj.ShipDestroyed(this);
                     notifiedOfDestruction = true;
                     Destroy(this.gameObject);
                 }
@@ -91,16 +89,16 @@ public class Enemy : MonoBehaviour
 
     public virtual void Move()
     {
-        Vector3 tempPos = pos;
-        tempPos.y -= speed * Time.deltaTime;
-        pos = tempPos;
+        Vector3 tempPosition = Position;
+        tempPosition.y -= speed * Time.deltaTime;
+        Position = tempPosition;
     }
 
     void ShowDamage()
     {
-        foreach (Material m in materials)
+        foreach (Material material in materials)
         {
-            m.color = Color.red;
+            material.color = Color.red;
         }
         showingDamage = true;
         damageDoneTime = Time.time + showDamageDuration;

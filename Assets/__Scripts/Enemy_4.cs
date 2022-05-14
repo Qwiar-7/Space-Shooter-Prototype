@@ -11,9 +11,9 @@ public class Part
     public string[] protectedBy; // Другие части, защищающие эту
 
     [HideInInspector]
-    public GameObject go;
+    public GameObject GameObj;
     [HideInInspector]
-    public Material mat;
+    public Material material;
 }
 
 /// <summary>
@@ -26,37 +26,37 @@ public class Enemy_4 : Enemy
     [Header("Set in Inspector: Enemy_4")]
     public Part[] parts; // Массив частей, составляющих корабль
 
-    private Vector3 p0, p1; // Две точки для интерполяции
+    private Vector3 pos0, pos1; // Две точки для интерполяции
     private float timeStart; // Время создания этого корабля
-    private float duration = 4; // Продолжительность перемещения
+    private readonly float duration = 4; // Продолжительность перемещения
 
     private void Start()
     {
         // Начальная позиция уже выбрана в Main.SpawnEnemy(),
         // поэтому запишем ее как начальные значения в р0 и p1
-        p0 = p1 = pos;
+        pos0 = pos1 = Position;
         InitMovement();
 
-        Transform t;
-        foreach (Part prt in parts)
+        Transform transf;
+        foreach (Part part in parts)
         {
-            t = transform.Find(prt.name);
-            if (t != null)
+            transf = transform.Find(part.name);
+            if (transf != null)
             {
-                prt.go = t.gameObject;
-                prt.mat = prt.go.GetComponent<Renderer>().material;
+                part.GameObj = transf.gameObject;
+                part.material = part.GameObj.GetComponent<Renderer>().material;
             }
         }
     }
 
     void InitMovement()
     {
-        p0 = p1;
+        pos0 = pos1;
         // Выбрать новую точку pl на экране
-        float widMinRad = bndCheck.camWidth - bndCheck.radius;
-        float hgtMinRad = bndCheck.camHeight - bndCheck.radius;
-        p1.x = Random.Range( -widMinRad, widMinRad);
-        p1.y = Random.Range( -hgtMinRad, hgtMinRad);
+        float widthMinRad = boundsCheck.cameraWidth - boundsCheck.radius;
+        float heightMinRad = boundsCheck.cameraHeight - boundsCheck.radius;
+        pos1.x = Random.Range( -widthMinRad, widthMinRad);
+        pos1.y = Random.Range( -heightMinRad, heightMinRad);
 
         // Сбросить время
         timeStart = Time.time;
@@ -73,92 +73,92 @@ public class Enemy_4 : Enemy
         }
 
         u = 1 - Mathf.Pow(1-u, 2); // Применить плавное замедление
-        pos = (1 - u) * p0 + u * p1; // Простая линейная интерполяция
+        Position = (1 - u) * pos0 + u * pos1; // Простая линейная интерполяция
     }
 
     // Эти две функции выполняют поиск части в массиве parts п
     // по имени или по ссылке на игровой объект
-    Part FindPart (GameObject go)
+    Part FindPart (GameObject GameObj)
     {
-        foreach (Part prt in parts)
+        foreach (Part part in parts)
         {
-            if (prt.go == go)
-                return prt;
+            if (part.GameObj == GameObj)
+                return part;
         }
         return null;
     }
 
-    Part FindPart(string n)
+    Part FindPart(string partName)
     {
-        foreach (Part prt in parts)
+        foreach (Part part in parts)
         {
-            if (prt.name == n)
-                return prt;
+            if (part.name == partName)
+                return part;
         }
         return null;
     }
 
     // Эти функции возвращают true, если данная часть уничтожена
-    bool Destroyed(GameObject go)
+    /*bool Destroyed(GameObject GameObj)
     {
-        return (Destroyed (FindPart(go)));
+        return (Destroyed(FindPart(GameObj)));
+    }*/
+
+    bool Destroyed(string name)
+    {
+        return (Destroyed(FindPart(name)));
     }
 
-    bool Destroyed(string n)
+    bool Destroyed(Part part)
     {
-        return (Destroyed (FindPart(n)));
-    }
-
-    bool Destroyed(Part prt)
-    {
-        if (prt == null) return true; // Если ссылка на часть не была передана - вернуть true (то есть: да, была уничтожена)
+        if (part == null) return true; // Если ссылка на часть не была передана - вернуть true (то есть: да, была уничтожена)
 
         // Вернуть результат сравнения: prt.health <= 0
         // Если prt.health <= 0, вернуть true (да, была уничтожена)
-        return (prt.health <= 0);
+        return (part.health <= 0);
     }
 
     // Окрашивает в красный только одну часть, а не весь корабль.
-    void ShowLocalizedDamage(Material m)
+    void ShowLocalizedDamage(Material material)
     {
-        m.color = Color.red;
+        material.color = Color.red;
         damageDoneTime = Time.time + showDamageDuration;
         showingDamage = true;
     }
 
-    private void OnCollisionEnter(Collision coll)
+    private void OnCollisionEnter(Collision otherCollision)
     {
-        GameObject other = coll.gameObject;
-        switch(other.tag)
+        GameObject otherGO = otherCollision.gameObject;
+        switch(otherGO.tag)
         {
             case "ProjectileHero":
-                Projectile p = other.GetComponent<Projectile>();
+                Projectile projectile = otherGO.GetComponent<Projectile>();
                 // Если корабль за границами экрана, не повреждать его.
-                if (!bndCheck.isOnScreen)
+                if (!boundsCheck.isOnScreen)
                 {
-                    Destroy(other);
+                    Destroy(otherGO);
                     break;
                 }
 
                 // Поразить вражеский корабль
-                GameObject goHit = coll.contacts[0].thisCollider.gameObject;
-                Part prtHit = FindPart(goHit);
-                if (prtHit == null)
+                GameObject hitedGO = otherCollision.contacts[0].thisCollider.gameObject;
+                Part hitedPart = FindPart(hitedGO);
+                if (hitedPart == null)
                 {
-                    goHit = coll.contacts[0].otherCollider.gameObject;
-                    prtHit = FindPart(goHit);
+                    hitedGO = otherCollision.contacts[0].otherCollider.gameObject;
+                    hitedPart = FindPart(hitedGO);
                 }
 
                 // Проверить, защищена ли еще эта часть корабля
-                if (prtHit.protectedBy != null)
+                if (hitedPart.protectedBy != null)
                 {
-                    foreach( string s in prtHit.protectedBy)
+                    foreach( string str in hitedPart.protectedBy)
                     {
                         // Если хотя бы одна из защищающих частей еще
                         // не разрушена...
-                        if (!Destroyed(s))
+                        if (!Destroyed(str))
                         {
-                            Destroy(other); // ...не наносить повреждений этой части Уничтожить снаряд ProjectileHero
+                            Destroy(otherGO); // ...не наносить повреждений этой части Уничтожить снаряд ProjectileHero
                             return; // выйти, не повреждая Enemy_4
                         }
                     }
@@ -166,20 +166,20 @@ public class Enemy_4 : Enemy
 
                 // Эта часть не защищена, нанести ей повреждение
                 // Получить разрушающую силу из Projectile.type и Main.WEAP_DICT
-                prtHit.health -= Main.GetWeaponDefinition(p.type).damageOnHit;
+                hitedPart.health -= Hero.GetWeaponDefinition(projectile.Type).damageOnHit;
                 // Показать эффект попадания в часть
-                ShowLocalizedDamage(prtHit.mat);
-                if (prtHit.health <= 0)
+                ShowLocalizedDamage(hitedPart.material);
+                if (hitedPart.health <= 0)
                 {
                     // Вместо разрушения всего корабля
                     // деактивировать уничтоженную часть
-                    prtHit.go.SetActive(false);
+                    hitedPart.GameObj.SetActive(false);
                 }
                 // Проверить, был ли корабль полностью разрушен
                 bool allDestroyed = true; // Предположить, что разрушен
-                foreach (Part ptr in parts)
+                foreach (Part part in parts)
                 {
-                    if(!Destroyed(ptr))
+                    if(!Destroyed(part))
                     {
                         allDestroyed = false;
                         break;
@@ -187,10 +187,10 @@ public class Enemy_4 : Enemy
                 }
                 if (allDestroyed)
                 {
-                    Main.S.ShipDestroyed(this);
+                    Main.mainObj.ShipDestroyed(this);
                     Destroy(this.gameObject);
                 }
-                Destroy(other); // Уничтожить снаряд ProjectileHero
+                Destroy(otherGO); // Уничтожить снаряд ProjectileHero
                 break;
         }
     }

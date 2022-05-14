@@ -8,25 +8,25 @@ public class Shield : MonoBehaviour
     public float rotationPerSecond = 0.1f;
 
     [Header("Set Dynamically")]
-    public int levelShown = 0;
+    public int visibleShieldLevel = 0;
 
-    Material mat;
+    Material material;
 
     private void Start()
     {
-        mat = GetComponent<Renderer>().material;
+        material = GetComponent<Renderer>().material;
     }
 
     private void Update()
     {
-        int currLevel = Mathf.FloorToInt(Hero.S.shieldLevel);
+        int currentLevel = Mathf.FloorToInt(Hero.heroObj.ShieldLevel);
 
-        if (levelShown != currLevel)
+        if (visibleShieldLevel != currentLevel)
         {
-            levelShown = currLevel;
-            mat.mainTextureOffset = new Vector2(0.2f * levelShown, 0);
+            visibleShieldLevel = currentLevel;
+            material.mainTextureOffset = new Vector2(0.2f * visibleShieldLevel, 0);
         }
-        float rZ = -(rotationPerSecond * Time.time * 360) % 360f;
-        transform.rotation = Quaternion.Euler(0, 0, rZ);
+        float rotationZ = -(rotationPerSecond * Time.time * 360) % 360f;
+        transform.rotation = Quaternion.Euler(0, 0, rotationZ);
     }
 }

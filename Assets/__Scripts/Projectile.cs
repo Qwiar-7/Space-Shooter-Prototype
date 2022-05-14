@@ -10,11 +10,11 @@ public class Projectile : MonoBehaviour
     [Header("Set Dynamically")]
     public Rigidbody rigid;
     [SerializeField]
-    private WeaponType _type;
+    private WeaponType type;
 
-    public WeaponType type
+    public WeaponType Type
     {
-        get { return _type; }
+        get { return type; }
         set { SetType(value); }
     }
 
@@ -36,11 +36,11 @@ public class Projectile : MonoBehaviour
     /// Изменяет скрытое поле _type и устанавливает цвет этого снаряда,
     /// как определено в WeaponDefinition.
     /// </summary>
-    /// <param name="eType">Тип WeaponType используемого оружия.</param>
-    public void SetType(WeaponType eType)
+    /// <param name="currenType">Тип WeaponType используемого оружия.</param>
+    public void SetType(WeaponType currenType)
     {
-        _type = eType;
-        WeaponDefinition def = Main.GetWeaponDefinition(_type);
+        type = currenType;
+        WeaponDefinition def = Hero.GetWeaponDefinition(type);
         rend.material.color = def.projectileColor;
     }
 }

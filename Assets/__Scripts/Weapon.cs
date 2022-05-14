@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -40,9 +38,9 @@ public class WeaponDefinition
 public class Weapon : MonoBehaviour
 {
     static public Transform PROJECTILE_ANCHOR;
-    [Header("Set Dynamically")] [SerializeField]
-    private WeaponType _type = WeaponType.none;
-    public WeaponDefinition def;
+    [Header("Set Dynamically")]
+    public WeaponType type = WeaponType.none;
+    public WeaponDefinition weaponDef;
     public GameObject collar;
     public float lastShotTime;
     private Renderer collarRend;
@@ -54,7 +52,7 @@ public class Weapon : MonoBehaviour
 
         // Вызвать SetType(), чтобы заменить тип оружия по умолчанию
         // WeaponType.none
-        SetType(_type);
+        SetType(type);
         // Динамически создать точку привязки для всех снарядов
         if (PROJECTILE_ANCHOR ==  null)
         {
@@ -69,15 +67,9 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    public WeaponType type
-    {  
-        get {  return _type; }
-        set {  _type = value; } 
-    }
-
-    public void SetType(WeaponType wt)
+    public void SetType(WeaponType weaponType)
     {
-        _type = wt;
+        type = weaponType;
         if (type == WeaponType.none)
         {
             this.gameObject.SetActive(false);
@@ -87,8 +79,8 @@ public class Weapon : MonoBehaviour
         {
             this.gameObject.SetActive(true);
         }
-        def=Main.GetWeaponDefinition(_type);
-        collarRend.material.color = def.color;
+        weaponDef = Hero.GetWeaponDefinition(type);
+        collarRend.material.color = weaponDef.color;
         lastShotTime = 0; // Сразу после установки _type можно выстрелить
     }
 
@@ -97,53 +89,55 @@ public class Weapon : MonoBehaviour
         // Если this.gameObject неактивен, выйти
         if (!gameObject.activeInHierarchy) return;
         // Если между выстрелами прошло недостаточно много времени, выйти
-        if (Time.time - lastShotTime < def.delayBetweenShots) return;
-        Projectile p;
-        Vector3 vel = Vector3.up * def.velocity;
+        if (Time.time - lastShotTime < weaponDef.delayBetweenShots) return;
+        Projectile projectile;
+        Vector3 velocity = Vector3.up * weaponDef.velocity;
         if (transform.up.y < 0)
         {
-            vel.y = -vel.y;
+            velocity.y = -velocity.y;
         }
         switch (type)
         {
             case WeaponType.blaster:
-                p = MakeProjectile();
-                p.rigid.velocity = vel;
+                projectile = MakeProjectile();
+                projectile.rigid.velocity = velocity;
                 break;
 
             case WeaponType.spread:
-                p = MakeProjectile();
-                p.rigid.velocity = vel;
-                p = MakeProjectile();
-                p.transform.rotation = Quaternion.AngleAxis(10, Vector3.back);
-                p.rigid.velocity = p.transform.rotation * vel;
-                p = MakeProjectile();
-                p.transform.rotation = Quaternion.AngleAxis(-10, Vector3.back);
-                p.rigid.velocity = p.transform.rotation * vel;
+                projectile = MakeProjectile();
+                projectile.rigid.velocity = velocity;
+                projectile = MakeProjectile();
+                projectile.transform.rotation = Quaternion.AngleAxis(10, Vector3.back);//поворот вдоль оси Z
+                projectile.rigid.velocity = projectile.transform.rotation * velocity;
+                projectile = MakeProjectile();
+                projectile.transform.rotation = Quaternion.AngleAxis(-10, Vector3.back);
+                projectile.rigid.velocity = projectile.transform.rotation * velocity;
+                break;
+            case WeaponType.phaser:
                 break;
         }
     }
 
     public Projectile MakeProjectile()
     {
-        GameObject go = Instantiate<GameObject>(def.projectilePrefab);
-        if (transform.parent.gameObject.tag == "Hero")
+        GameObject gameObj = Instantiate<GameObject>(weaponDef.projectilePrefab);
+        if (transform.parent.gameObject.CompareTag("Hero"))
         {
-            go.tag = "ProjectileHero";
+            gameObj.tag = "ProjectileHero";
             //go.layer = LayerMask.NameToLayer("ProjectileHero");
-            go.layer = 10;
+            gameObj.layer = 10;
         }
         else
         {
-            go.tag = "ProjectileEnemy";
+            gameObj.tag = "ProjectileEnemy";
             //go.layer = LayerMask.NameToLayer("ProjectileEnemy");
-            go.layer = 11;
+            gameObj.layer = 11;
         }
-        go.transform.position = collar.transform.position;
-        go.transform.SetParent(PROJECTILE_ANCHOR, true);
-        Projectile p = go.GetComponent<Projectile>();
-        p.type = type;
+        gameObj.transform.position = collar.transform.position;
+        gameObj.transform.SetParent(PROJECTILE_ANCHOR, true);
+        Projectile projectile = gameObj.GetComponent<Projectile>();
+        projectile.Type = type;
         lastShotTime = Time.time;
-        return (p);
+        return (projectile);
     }
 }

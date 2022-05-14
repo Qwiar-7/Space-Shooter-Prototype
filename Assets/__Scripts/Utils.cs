@@ -7,15 +7,15 @@ public class Utils : MonoBehaviour
     //===================== Функции для работы с материалами =====================\\
     // Возвращает список всех материалов в данном игровом объекте
     // и его дочерних объектах
-    static public Material[] GetAllMaterials(GameObject go)
+    static public Material[] GetAllMaterials(GameObject GameObj)
     {
-        Renderer[] rends = go.GetComponentsInChildren<Renderer>();
+        Renderer[] renderers = GameObj.GetComponentsInChildren<Renderer>();
 
-        List<Material> mats = new List<Material>();
-        foreach (Renderer rend in rends)
+        List<Material> materials = new List<Material>();
+        foreach (Renderer renderer in renderers)
         {
-            mats.Add(rend.material);
+            materials.Add(renderer.material);
         }
-        return mats.ToArray();
+        return materials.ToArray();
     }
 }
