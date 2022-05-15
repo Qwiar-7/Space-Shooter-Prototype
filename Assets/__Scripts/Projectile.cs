@@ -1,18 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    private BoundsCheck bndCheck;
-    private Renderer rend;
+    public float damage = 1f;
+    public float continuousDamage = 0;
+    protected BoundsCheck bndCheck;
+    protected Renderer rend;
 
     [Header("Set Dynamically")]
     public Rigidbody rigid;
     [SerializeField]
-    private WeaponType type;
+    protected WeaponType type;
 
-    public WeaponType Type
+    public WeaponType Type //возможно поменять, setType?
     {
         get { return type; }
         set { SetType(value); }
@@ -40,7 +40,7 @@ public class Projectile : MonoBehaviour
     public void SetType(WeaponType currenType)
     {
         type = currenType;
-        WeaponDefinition def = Hero.GetWeaponDefinition(type);
+        WeaponParameters def = Hero.GetWeaponParameters(type);
         rend.material.color = def.projectileColor;
     }
 }

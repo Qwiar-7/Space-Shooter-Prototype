@@ -346,14 +346,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  weaponDef:
+  weaponParam:
     type: 0
     letter: 
     color: {r: 1, g: 1, b: 1, a: 1}
     projectilePrefab: {fileID: 0}
     projectileColor: {r: 1, g: 1, b: 1, a: 1}
-    damageOnHit: 0
-    continuousDamage: 0
     delayBetweenShots: 0
     velocity: 20
   collar: {fileID: 0}
@@ -597,14 +595,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  weaponDef:
+  weaponParam:
     type: 0
     letter: 
     color: {r: 1, g: 1, b: 1, a: 1}
     projectilePrefab: {fileID: 0}
     projectileColor: {r: 1, g: 1, b: 1, a: 1}
-    damageOnHit: 0
-    continuousDamage: 0
     delayBetweenShots: 0
     velocity: 20
   collar: {fileID: 0}
@@ -996,11 +992,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabEnemies:
-  - {fileID: 5420625870032263103, guid: 13f79c98a3fb2644388b23d45aa74fd1, type: 3}
+  - {fileID: 5814615148040578281, guid: 9b918885f81efbd4a82446b74d6f6a81, type: 3}
+  gameRestartDelay: 2
   enemySpawnPerSecond: 0.6
-  enemyDefaultPadding: 1.5
-  prefabPowerUp: {fileID: 7094129368567732144, guid: 7ccf526534f173b448c6b86ba6bda7d9, type: 3}
-  powerUpFrequency: 01000000010000000200000006000000
+  enemyDefaultPadding: 2
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1827,14 +1822,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  weaponDef:
+  weaponParam:
     type: 0
     letter: 
     color: {r: 1, g: 1, b: 1, a: 1}
     projectilePrefab: {fileID: 0}
     projectileColor: {r: 1, g: 1, b: 1, a: 1}
-    damageOnHit: 0
-    continuousDamage: 0
     delayBetweenShots: 0
     velocity: 20
   collar: {fileID: 0}
@@ -1885,14 +1878,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  weaponDef:
+  weaponParam:
     type: 0
     letter: 
     color: {r: 1, g: 1, b: 1, a: 1}
     projectilePrefab: {fileID: 0}
     projectileColor: {r: 1, g: 1, b: 1, a: 1}
-    damageOnHit: 0
-    continuousDamage: 0
     delayBetweenShots: 0
     velocity: 20
   collar: {fileID: 0}
@@ -1943,14 +1934,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  weaponDef:
+  weaponParam:
     type: 0
     letter: 
     color: {r: 1, g: 1, b: 1, a: 1}
     projectilePrefab: {fileID: 0}
     projectileColor: {r: 1, g: 1, b: 1, a: 1}
-    damageOnHit: 0
-    continuousDamage: 0
     delayBetweenShots: 0
     velocity: 20
   collar: {fileID: 0}
@@ -2277,23 +2266,18 @@ MonoBehaviour:
   speed: 30
   rollMultiplier: -45
   pitchMultiplier: 30
-  gameRestartDelay: 2
-  projectilePrefab: {fileID: 5500788920637927441, guid: 55511ebadbc320a42b66d283ac9bd523, type: 3}
-  projectileSpeed: 40
   weapons:
   - {fileID: 233564911}
   - {fileID: 1502028655}
   - {fileID: 1414484249}
   - {fileID: 547086129}
   - {fileID: 1485400231}
-  weaponDefinitions:
+  weaponParams:
   - type: 6
     letter: O
-    color: {r: 0, g: 0.64705884, b: 0, a: 1}
+    color: {r: 0.018155891, g: 0.5660378, b: 0.10666323, a: 1}
     projectilePrefab: {fileID: 0}
-    projectileColor: {r: 0, g: 0.64705884, b: 0, a: 1}
-    damageOnHit: 0
-    continuousDamage: 0
+    projectileColor: {r: 0.019607844, g: 0.5647059, b: 0.10588236, a: 1}
     delayBetweenShots: 0
     velocity: 0
   - type: 1
@@ -2301,19 +2285,22 @@ MonoBehaviour:
     color: {r: 1, g: 1, b: 1, a: 1}
     projectilePrefab: {fileID: 5500788920637927441, guid: 55511ebadbc320a42b66d283ac9bd523, type: 3}
     projectileColor: {r: 1, g: 1, b: 1, a: 1}
-    damageOnHit: 1
-    continuousDamage: 0
     delayBetweenShots: 0.2
     velocity: 50
   - type: 2
     letter: S
-    color: {r: 1, g: 0, b: 0, a: 1}
+    color: {r: 1, g: 0.84243375, b: 0, a: 1}
     projectilePrefab: {fileID: 5500788920637927441, guid: 55511ebadbc320a42b66d283ac9bd523, type: 3}
-    projectileColor: {r: 1, g: 0, b: 0, a: 1}
-    damageOnHit: 1
-    continuousDamage: 0
+    projectileColor: {r: 1, g: 0.8431373, b: 0, a: 1}
     delayBetweenShots: 0.4
     velocity: 50
+  - type: 3
+    letter: P
+    color: {r: 0, g: 0.26784706, b: 1, a: 1}
+    projectilePrefab: {fileID: 475425784615658341, guid: c77e510aab58b8f488ec1696473ef05b, type: 3}
+    projectileColor: {r: 0, g: 0.26666668, b: 1, a: 1}
+    delayBetweenShots: 0.5
+    velocity: 20
   _shieldLevel: 4
 --- !u!4 &1821439378
 Transform:

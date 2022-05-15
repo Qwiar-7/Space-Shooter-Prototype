@@ -8,6 +8,8 @@ public class Enemy : MonoBehaviour
     public float health = 10;
     public int score = 100;
     public float showDamageDuration = 0.1f; // Длительность эффекта попадания в секундах
+    public GameObject prefabPowerUp;
+    public WeaponType[] powerUpFrequency = new WeaponType[] { WeaponType.blaster, WeaponType.shield };
     public float powerUpDropChance = 1f; //Вероятность сбросить бонус
 
     [Header("Set Dynamically: Enemy")]
@@ -52,13 +54,13 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision otherCollision)
     {
-        GameObject otherGO = collision.gameObject;
+        GameObject otherGO = otherCollision.gameObject;
         switch (otherGO.tag)
         {
             case "ProjectileHero":
-                Projectile projectile = otherGO.GetComponent<Projectile>();
+                Projectile projectileHero = otherGO.GetComponent<Projectile>();
                 // Если вражеский корабль за границами экрана,
                 // не наносить ему повреждений.
                 if (!boundsCheck.isOnScreen)
@@ -70,12 +72,12 @@ public class Enemy : MonoBehaviour
                 // Поразить вражеский корабль
                 ShowDamage();
                 // Получить разрушающую силу из WEAP_DICT в классе Main,
-                health -= Hero.GetWeaponDefinition(projectile.Type).damageOnHit;
+                health -= projectileHero.damage;
                 if (health <= 0)
                 {
                     // Сообщить объекту-одиночке Main об уничтожении
                     if (!notifiedOfDestruction)
-                        Main.mainObj.ShipDestroyed(this);
+                        PowerUpDrop();
                     notifiedOfDestruction = true;
                     Destroy(this.gameObject);
                 }
@@ -84,6 +86,24 @@ public class Enemy : MonoBehaviour
             default:
                 print("Enemy hit by non-ProjectileHero: " + otherGO.name);
                 break;
+        }
+    }
+    protected void PowerUpDrop()
+    {
+        if (Random.value <= powerUpDropChance)
+        {
+            // Выбрать тип бонуса
+            // Выбрать один из элементов в powerUpFrequency
+            int index = Random.Range(0, powerUpFrequency.Length);
+            WeaponType powerUpType = powerUpFrequency[index];
+
+            // Создать экземпляр PowerUp
+            GameObject gameObj = Instantiate(prefabPowerUp);
+            PowerUp powerUp = gameObj.GetComponent<PowerUp>();
+            // Установить соответствующий тип WeaponType
+            powerUp.SetType(powerUpType);
+            // Поместить в место, где находился разрушенный корабль
+            powerUp.transform.position = transform.position;
         }
     }
 

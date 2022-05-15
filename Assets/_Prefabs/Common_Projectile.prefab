@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 5500788920637927443}
   - component: {fileID: 5500788920637927442}
   - component: {fileID: 8672031017454571920}
-  m_Layer: 10
-  m_Name: Projectile
+  m_Layer: 0
+  m_Name: Common_Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -126,6 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d829aea372c528048963c5f91a4b1284, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 1
   rigid: {fileID: 0}
   type: 0
 --- !u!114 &8672031017454571920
@@ -140,7 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b3bb2f9062687c49b8b122f6d0c1c81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: -1
+  radius: 1
   keepOnScreen: 0
   isOnScreen: 1
   cameraWidth: 0

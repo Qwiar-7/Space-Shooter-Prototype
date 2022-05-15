@@ -89,7 +89,9 @@ MonoBehaviour:
   health: 4
   score: 100
   showDamageDuration: 0.1
-  powerUpDropChance: 0.2
+  prefabPowerUp: {fileID: 7094129368567732144, guid: 7ccf526534f173b448c6b86ba6bda7d9, type: 3}
+  powerUpFrequency: 020000000600000003000000
+  powerUpDropChance: 1
   originalColors: []
   materials: []
   showingDamage: 0

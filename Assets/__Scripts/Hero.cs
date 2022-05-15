@@ -5,28 +5,20 @@ using UnityEngine;
 public class Hero : MonoBehaviour
 {
     static public Hero heroObj;
-    static Dictionary<WeaponType, WeaponDefinition> WeaponDictionary;
+    static Dictionary<WeaponType, WeaponParameters> WeaponDictionary;
 
     [Header("Set in Inspector")]
     public float speed = 30;
     public float rollMultiplier = -45;
     public float pitchMultiplier = 30;
-    public float gameRestartDelay = 2f; //время до перезапуска
-    public GameObject projectilePrefab;
-    public float projectileSpeed = 40;
     public Weapon[] weapons;
-    public WeaponDefinition[] weaponDefinitions;
+    public WeaponParameters[] weaponParams;
 
     [Header("Set Dynamically")]
     [SerializeField]
     private float _shieldLevel = 4;
 
     private GameObject lastTriggeredGameObj = null;
-
-    // Объявление нового делегата типа WeaponFireDelegate
-    public delegate void WeaponFireDelegate();
-    // Создать поле типа WeaponFireDelegate с именем fireDelegate.
-    public WeaponFireDelegate fireDelegate;
 
     public float ShieldLevel
     {
@@ -37,7 +29,7 @@ public class Hero : MonoBehaviour
             if (value < 0)
             {
                 Destroy(this.gameObject);
-                Main.mainObj.DelayedRestart(gameRestartDelay);
+                Main.mainObj.DelayedRestart();
             }
         }
     }
@@ -45,21 +37,21 @@ public class Hero : MonoBehaviour
     private void Awake()
     {
         // Словарь с ключами типа WeaponType
-        WeaponDictionary = new Dictionary<WeaponType, WeaponDefinition>();
-        foreach (WeaponDefinition weapontDef in weaponDefinitions)
+        WeaponDictionary = new Dictionary<WeaponType, WeaponParameters>();
+        foreach (WeaponParameters weapontDef in weaponParams)
         {
             WeaponDictionary[weapontDef.type] = weapontDef;
         }
-    }
-    private void Start()
-    {
         if (heroObj == null)
             heroObj = this;
         else
             Debug.LogError("Hero.Awake() - Попытка создать 2-ой экземпляр Hero.S!");
-        //fireDelegate += TempFire;
+
+    }
+    private void Start()
+    {
         ClearWeapons();
-        weapons[0].SetType(WeaponType.blaster);
+        weapons[0].SetType(WeaponType.phaser);
     }
 
     private void Update()
@@ -75,43 +67,43 @@ public class Hero : MonoBehaviour
 
         //if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0))
 
-        // Произвести выстрел из всех видов оружия вызовом fireDelegate
         // Сначала проверить нажатие клавиши: Axis("Jump")
-        // Затем убедиться, что значение fireDelegate не равно null,
-        // чтобы избежать ошибки
-        if (Input.GetAxis("Jump") == 1 && fireDelegate != null)
-            fireDelegate();
+        if (Input.GetAxis("Jump") == 1)
+            foreach (var weapon in weapons)
+            {
+                weapon.MakeShot();
+            }
     }
 
-    private void OnTriggerEnter(Collider otherGO)
+    private void OnTriggerEnter(Collider otherCollider)
     {
-        Transform rootTransform = otherGO.gameObject.transform.root;
-        GameObject gameObj = rootTransform.gameObject;
+        Transform otherRootTransform = otherCollider.gameObject.transform.root;
+        GameObject otherGO = otherRootTransform.gameObject;
 
-        if (gameObj == lastTriggeredGameObj) return;
+        if (otherGO == lastTriggeredGameObj) return;
 
-        lastTriggeredGameObj = gameObj;
+        lastTriggeredGameObj = otherGO;
 
-        if (gameObj.CompareTag("Enemy"))
+        if (otherGO.CompareTag("Enemy"))
         {
             ShieldLevel--;
-            Destroy(gameObj);
+            Destroy(otherGO);
         }
-        else if (gameObj.CompareTag("PowerUp"))
-            AbsorbPowerUp(gameObj);
+        else if (otherGO.CompareTag("PowerUp"))
+            AbsorbPowerUp(otherGO);
         else
-            print("Triggered by non-Enemy: " + gameObj.name);
+            print("Triggered by non-Enemy: " + otherGO.name);
     }
 
     /// <summary>
-    /// Статистическая функцияб возвращающая WeaponDefinition из статистического
+    /// Статистическая функция возвращающая WeaponParameters из статистического
     /// защищенного поля WEAP_DICT класса Main.
     /// </summary>
-    /// <param name="type">Тип оружия WeaponType, для которого требуется получить WeaponDefinition</param>
-    /// <returns>Экземпляр WeaponDefinition или, если нет такого определения
-    /// для указанного WeaponType, возвращает новый экземпляр WeaponDefinition
+    /// <param name="type">Тип оружия WeaponType, для которого требуется получить WeaponParameters</param>
+    /// <returns>Экземпляр WeaponParameters или, если нет такого определения
+    /// для указанного WeaponType, возвращает новый экземпляр WeaponParameters
     /// с типом none.</returns>
-    static public WeaponDefinition GetWeaponDefinition(WeaponType type)
+    static public WeaponParameters GetWeaponParameters(WeaponType type)
     {
         // Проверить наличие указанного ключа в словаре
         // Попытка извлечь значение по отсутствующему ключу вызовет ошибку,
@@ -124,7 +116,7 @@ public class Hero : MonoBehaviour
         // Следующая инструкция возвращает новый экземпляр WeaponDefinition
         // с типом оружия WeaponType.nоnе, что означает неудачную попытку
         // найти требуемое определение WeaponDefinition
-        return new WeaponDefinition();
+        return new WeaponParameters();
     }
 
     public void AbsorbPowerUp (GameObject gameObj)

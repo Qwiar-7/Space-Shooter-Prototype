@@ -8,11 +8,9 @@ public class Main : MonoBehaviour
 
     [Header("Set in Inspector")]
     public GameObject[] prefabEnemies;
+    public float gameRestartDelay = 2f;         //время до перезапуска
     public float enemySpawnPerSecond = 0.5f;    //количество врагов в секунду
-    public float enemyDefaultPadding = 1.5f;    //отступ от верхнего края
-    public GameObject prefabPowerUp;
-    public WeaponType[] powerUpFrequency = new WeaponType[] { WeaponType.blaster,
-        WeaponType.blaster, WeaponType.spread, WeaponType.shield };
+    public float enemyDefaultPadding = 2f;    //отступ от верхнего края
 
     private BoundsCheck boundsCheck;
 
@@ -20,17 +18,17 @@ public class Main : MonoBehaviour
     {
         mainObj = this;
         boundsCheck = GetComponent<BoundsCheck>();
-        Invoke (nameof(SpawnEnemy), 1f/enemySpawnPerSecond);  //время до появления первого врага
+        Invoke (nameof(SpawnEnemy), 3f);  //время до появления первого врага
     }
 
     public void SpawnEnemy()
     {
         int index = Random.Range(0, prefabEnemies.Length);
-        GameObject gameObj = Instantiate<GameObject> (prefabEnemies[index]);
+        GameObject gameObj = Instantiate(prefabEnemies[index]);
 
         float enemyPadding = enemyDefaultPadding;
         if (gameObj.GetComponent<BoundsCheck>() != null)
-            enemyPadding = Mathf.Abs(gameObj.GetComponent<BoundsCheck>().radius);//?????????????абсолютное радиус с -
+            enemyPadding = gameObj.GetComponent<BoundsCheck>().radius;
 
         Vector3 position = Vector3.zero;
         float xMin = -boundsCheck.cameraWidth + enemyPadding;
@@ -42,32 +40,13 @@ public class Main : MonoBehaviour
         Invoke(nameof(SpawnEnemy), 1f / enemySpawnPerSecond);
     }
 
-    public void DelayedRestart ( float delay )
+    public void DelayedRestart ()
     {
-        Invoke(nameof(Restart), delay);
+        Invoke(nameof(Restart), gameRestartDelay);
     }
 
     public void Restart()
     {
         SceneManager.LoadScene("SampleScene");
-    }
-
-    public void ShipDestroyed(Enemy enemy)
-    {
-        if (Random.value <= enemy.powerUpDropChance)
-        {
-            // Выбрать тип бонуса
-            // Выбрать один из элементов в powerUpFrequency
-            int index = Random.Range(0,powerUpFrequency.Length);
-            WeaponType powerUpType = powerUpFrequency[index];
-
-            // Создать экземпляр PowerUp
-            GameObject gameObj = Instantiate (prefabPowerUp);
-            PowerUp powerUp = gameObj.GetComponent<PowerUp>();
-            // Установить соответствующий тип WeaponType
-            powerUp.SetType(powerUpType);
-            // Поместить в место, где находился разрушенный корабль
-            powerUp.transform.position = enemy.transform.position;
-        }
     }
 }

@@ -23,15 +23,15 @@ public enum WeaponType
 /// будет хранить массив элементов типа WeaponDefinition.
 /// </summary>
 [System.Serializable]
-public class WeaponDefinition
+public class WeaponParameters
 {
     public WeaponType type = WeaponType.none;
     public string letter; //Буква на кубике, изображающем бонус
     public Color color = Color.white; //Цвет ствола оружия и кубика бонуса
     public GameObject projectilePrefab; //Шаблон снарядов
     public Color projectileColor = Color.white; //цвет снарядов
-    public float damageOnHit = 0; // Разрушительная мощность
-    public float continuousDamage = 0; //Степень разрушения в секунду (для Laser)
+    //public float damageOnHit = 0; // Разрушительная мощность
+    //public float continuousDamage = 0; //Степень разрушения в секунду (для Laser)
     public float delayBetweenShots = 0; //задержка между выстрелами
     public float velocity = 20; //Скорость полета снарядов
 }
@@ -40,7 +40,7 @@ public class Weapon : MonoBehaviour
     static public Transform PROJECTILE_ANCHOR;
     [Header("Set Dynamically")]
     public WeaponType type = WeaponType.none;
-    public WeaponDefinition weaponDef;
+    public WeaponParameters weaponParam;
     public GameObject collar;
     public float lastShotTime;
     private Renderer collarRend;
@@ -56,14 +56,8 @@ public class Weapon : MonoBehaviour
         // Динамически создать точку привязки для всех снарядов
         if (PROJECTILE_ANCHOR ==  null)
         {
-            GameObject go = new GameObject("_ProjectileAnchor");
+            GameObject go = new GameObject("Projectile_Anchor");
             PROJECTILE_ANCHOR = go.transform;
-        }
-        // Найти fireDelegate в корневом игровом объекте
-        GameObject rootGO = transform.root.gameObject;
-        if(rootGO.GetComponent<Hero>() != null)//проверка оружия на игроке
-        {
-            rootGO.GetComponent<Hero>().fireDelegate += Fire;
         }
     }
 
@@ -79,52 +73,61 @@ public class Weapon : MonoBehaviour
         {
             this.gameObject.SetActive(true);
         }
-        weaponDef = Hero.GetWeaponDefinition(type);
-        collarRend.material.color = weaponDef.color;
+        weaponParam = Hero.GetWeaponParameters(type);
+        collarRend.material.color = weaponParam.color;
         lastShotTime = 0; // Сразу после установки _type можно выстрелить
     }
 
-    public void Fire()
+    public void MakeShot()
     {
         // Если this.gameObject неактивен, выйти
         if (!gameObject.activeInHierarchy) return;
         // Если между выстрелами прошло недостаточно много времени, выйти
-        if (Time.time - lastShotTime < weaponDef.delayBetweenShots) return;
-        Projectile projectile;
-        Vector3 velocity = Vector3.up * weaponDef.velocity;
+        if (Time.time - lastShotTime < weaponParam.delayBetweenShots) return;
+        Vector3 velocity = Vector3.up * weaponParam.velocity;
         if (transform.up.y < 0)
         {
             velocity.y = -velocity.y;
         }
-        switch (type)
+        
+        if(type == WeaponType.blaster)
         {
-            case WeaponType.blaster:
-                projectile = MakeProjectile();
-                projectile.rigid.velocity = velocity;
-                break;
-
-            case WeaponType.spread:
-                projectile = MakeProjectile();
-                projectile.rigid.velocity = velocity;
-                projectile = MakeProjectile();
-                projectile.transform.rotation = Quaternion.AngleAxis(10, Vector3.back);//поворот вдоль оси Z
-                projectile.rigid.velocity = projectile.transform.rotation * velocity;
-                projectile = MakeProjectile();
-                projectile.transform.rotation = Quaternion.AngleAxis(-10, Vector3.back);
-                projectile.rigid.velocity = projectile.transform.rotation * velocity;
-                break;
-            case WeaponType.phaser:
-                break;
+            Projectile projectile;
+            projectile = MakeProjectileShot();
+            projectile.rigid.velocity = velocity;
+        }
+        else if(type == WeaponType.spread)
+        {
+            Projectile projectile;
+            projectile = MakeProjectileShot();
+            projectile.rigid.velocity = velocity;
+            projectile = MakeProjectileShot();
+            projectile.transform.rotation = Quaternion.AngleAxis(10, Vector3.back);//поворот вдоль оси Z
+            projectile.rigid.velocity = projectile.transform.rotation * velocity;
+            projectile = MakeProjectileShot();
+            projectile.transform.rotation = Quaternion.AngleAxis(-10, Vector3.back);
+            projectile.rigid.velocity = projectile.transform.rotation * velocity;
+        }
+        else if (type == WeaponType.phaser)
+        {
+            PhaserProjectile projectile;
+            projectile = MakeProjectileShot() as PhaserProjectile;
+            projectile.transform.position = collar.transform.position + Vector3.right;
+            projectile.rigid.velocity = velocity;
+            projectile = MakeProjectileShot() as PhaserProjectile;
+            projectile.isReverse = true;
+            projectile.transform.position = collar.transform.position + Vector3.left;
+            projectile.rigid.velocity = velocity;
         }
     }
 
-    public Projectile MakeProjectile()
+    public Projectile MakeProjectileShot()
     {
-        GameObject gameObj = Instantiate<GameObject>(weaponDef.projectilePrefab);
+        GameObject gameObj = Instantiate(weaponParam.projectilePrefab);
         if (transform.parent.gameObject.CompareTag("Hero"))
         {
             gameObj.tag = "ProjectileHero";
-            //go.layer = LayerMask.NameToLayer("ProjectileHero");
+            //gameObj.layer = LayerMask.NameToLayer("ProjectileHero");
             gameObj.layer = 10;
         }
         else

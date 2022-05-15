@@ -85,7 +85,7 @@ public class PowerUp : MonoBehaviour
     public void SetType (WeaponType type)
     {
         // Получить WeaponDefinition из Main
-        WeaponDefinition weaponDef = Hero.GetWeaponDefinition(type);
+        WeaponParameters weaponDef = Hero.GetWeaponParameters(type);
         // Установить цвет дочернего куба
         cubeRenderer.material.color = weaponDef.color;
         //letter.color = def.color;
@@ -93,7 +93,7 @@ public class PowerUp : MonoBehaviour
         this.type = type; // В заключение установить фактический тип
     }
 
-    public void AbsorbedBy (GameObject target)
+    public void AbsorbedBy(GameObject target)
     {
         // Эта функция вызывается классом Него, когда игрок подбирает бонус
         // Можно было бы реализовать эффект поглощения бонуса, уменьшая его

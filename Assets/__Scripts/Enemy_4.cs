@@ -166,7 +166,7 @@ public class Enemy_4 : Enemy
 
                 // Эта часть не защищена, нанести ей повреждение
                 // Получить разрушающую силу из Projectile.type и Main.WEAP_DICT
-                hitedPart.health -= Hero.GetWeaponDefinition(projectile.Type).damageOnHit;
+                hitedPart.health -= projectile.damage;
                 // Показать эффект попадания в часть
                 ShowLocalizedDamage(hitedPart.material);
                 if (hitedPart.health <= 0)
@@ -187,7 +187,7 @@ public class Enemy_4 : Enemy
                 }
                 if (allDestroyed)
                 {
-                    Main.mainObj.ShipDestroyed(this);
+                    PowerUpDrop();
                     Destroy(this.gameObject);
                 }
                 Destroy(otherGO); // Уничтожить снаряд ProjectileHero
