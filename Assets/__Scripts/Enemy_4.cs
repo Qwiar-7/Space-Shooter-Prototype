@@ -25,6 +25,7 @@ public class Enemy_4 : Enemy
 {
     [Header("Set in Inspector: Enemy_4")]
     public Part[] parts; // Массив частей, составляющих корабль
+    public int numberOfMoves = 5;
 
     private Vector3 pos0, pos1; // Две точки для интерполяции
     private float timeStart; // Время создания этого корабля
@@ -52,11 +53,25 @@ public class Enemy_4 : Enemy
     void InitMovement()
     {
         pos0 = pos1;
-        // Выбрать новую точку pl на экране
+        // Выбрать новую точку на экране
         float widthMinRad = boundsCheck.cameraWidth - boundsCheck.radius;
         float heightMinRad = boundsCheck.cameraHeight - boundsCheck.radius;
         pos1.x = Random.Range( -widthMinRad, widthMinRad);
         pos1.y = Random.Range( -heightMinRad, heightMinRad);
+
+        // Сбросить время
+        timeStart = Time.time;
+    }
+
+    void LastMovement()
+    {
+        pos0 = pos1;
+        float widthMinRad = boundsCheck.cameraWidth + boundsCheck.radius; // выбрать точку за пределами экрана
+        if (Random.value > 0.5f)
+            widthMinRad *= -1;
+        float heightMinRad = boundsCheck.cameraHeight - boundsCheck.radius;
+        pos1.x = widthMinRad;
+        pos1.y = Random.Range(-heightMinRad, heightMinRad);
 
         // Сбросить время
         timeStart = Time.time;
@@ -68,8 +83,15 @@ public class Enemy_4 : Enemy
 
         if (u >= 1)
         {
-            InitMovement();
+            if (numberOfMoves <= 1)
+            {
+                LastMovement();
+                Invoke(nameof(EnemyDestroy), duration);
+            }
+            else
+                InitMovement();
             u = 0;
+            numberOfMoves--;
         }
 
         u = 1 - Mathf.Pow(1-u, 2); // Применить плавное замедление
@@ -167,6 +189,7 @@ public class Enemy_4 : Enemy
                 // Эта часть не защищена, нанести ей повреждение
                 // Получить разрушающую силу из Projectile.type и Main.WEAP_DICT
                 hitedPart.health -= projectile.damage;
+                hitedPart.health -= projectile.continuousDamage * Time.deltaTime;
                 // Показать эффект попадания в часть
                 ShowLocalizedDamage(hitedPart.material);
                 if (hitedPart.health <= 0)
@@ -187,11 +210,21 @@ public class Enemy_4 : Enemy
                 }
                 if (allDestroyed)
                 {
-                    PowerUpDrop();
+                    if (!notifiedOfDestruction)
+                    {
+                        PowerUpDrop();
+                        ScoreManager.UpdateCurrentScore(score);
+                    }
+                    notifiedOfDestruction = true;
                     Destroy(this.gameObject);
                 }
                 Destroy(otherGO); // Уничтожить снаряд ProjectileHero
                 break;
         }
+    }
+
+    void EnemyDestroy()
+    {
+        Destroy(gameObject);
     }
 }

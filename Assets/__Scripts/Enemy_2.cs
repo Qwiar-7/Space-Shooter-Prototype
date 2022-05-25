@@ -49,6 +49,7 @@ public class Enemy_2 : Enemy
 
         u += sinEccentricity * (Mathf.Sin(u * Mathf.PI * 2)); //для ослабления эффекта замедления
 
-        Position = (1 - u) * pos0 + u * pos1;
+        //Position = (1 - u) * pos0 + u * pos1;
+        Position = pos0 + (pos1 - pos0) * u;
     }
 }

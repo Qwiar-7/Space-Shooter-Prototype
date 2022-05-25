@@ -45,6 +45,8 @@ public class Weapon : MonoBehaviour
     public float lastShotTime;
     private Renderer collarRend;
 
+    LaserProjectile projectile;
+
     private void Start()
     {
         collar = transform.Find("Collar").gameObject;
@@ -75,7 +77,7 @@ public class Weapon : MonoBehaviour
         }
         weaponParam = Hero.GetWeaponParameters(type);
         collarRend.material.color = weaponParam.color;
-        lastShotTime = 0; // Сразу после установки _type можно выстрелить
+        lastShotTime = -weaponParam.delayBetweenShots; // Сразу после установки _type можно выстрелить
     }
 
     public void MakeShot()
@@ -119,6 +121,13 @@ public class Weapon : MonoBehaviour
             projectile.transform.position = collar.transform.position + Vector3.left;
             projectile.rigid.velocity = velocity;
         }
+        else if (type == WeaponType.laser)
+        {
+            if (projectile != null) return;
+            projectile = MakeLaserShot();
+            projectile.transform.position = collar.transform.position + new Vector3(0, 50, 0);
+            projectile.currentWeapon = this;
+        }
     }
 
     public Projectile MakeProjectileShot()
@@ -127,18 +136,37 @@ public class Weapon : MonoBehaviour
         if (transform.parent.gameObject.CompareTag("Hero"))
         {
             gameObj.tag = "ProjectileHero";
-            //gameObj.layer = LayerMask.NameToLayer("ProjectileHero");
             gameObj.layer = 10;
         }
         else
         {
             gameObj.tag = "ProjectileEnemy";
-            //go.layer = LayerMask.NameToLayer("ProjectileEnemy");
             gameObj.layer = 11;
         }
         gameObj.transform.position = collar.transform.position;
         gameObj.transform.SetParent(PROJECTILE_ANCHOR, true);
         Projectile projectile = gameObj.GetComponent<Projectile>();
+        projectile.Type = type;
+        lastShotTime = Time.time;
+        return (projectile);
+    }
+
+    public LaserProjectile MakeLaserShot()
+    {
+        GameObject gameObj = Instantiate(weaponParam.projectilePrefab);
+        if (transform.parent.gameObject.CompareTag("Hero"))
+        {
+            gameObj.tag = "ProjectileHero";
+            gameObj.layer = 10;
+        }
+        else
+        {
+            gameObj.tag = "ProjectileEnemy";
+            gameObj.layer = 11;
+        }
+        gameObj.transform.position = collar.transform.position;
+        gameObj.transform.SetParent(PROJECTILE_ANCHOR, true);
+        LaserProjectile projectile = gameObj.GetComponent<LaserProjectile>();
         projectile.Type = type;
         lastShotTime = Time.time;
         return (projectile);

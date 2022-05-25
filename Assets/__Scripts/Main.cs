@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class Main : MonoBehaviour
@@ -10,7 +10,11 @@ public class Main : MonoBehaviour
     public GameObject[] prefabEnemies;
     public float gameRestartDelay = 2f;         //время до перезапуска
     public float enemySpawnPerSecond = 0.5f;    //количество врагов в секунду
-    public float enemyDefaultPadding = 2f;    //отступ от верхнего края
+    public float enemyDefaultPadding = 2f;      //отступ от верхнего края
+    public GameObject[] panels;
+    public float scrollSpeed = -30f;
+
+    [Header("Set Dynamically")]
 
     private BoundsCheck boundsCheck;
 
@@ -18,7 +22,8 @@ public class Main : MonoBehaviour
     {
         mainObj = this;
         boundsCheck = GetComponent<BoundsCheck>();
-        Invoke (nameof(SpawnEnemy), 3f);  //время до появления первого врага
+
+        Invoke(nameof(SpawnEnemy), 3f);  //время до появления первого врага
     }
 
     public void SpawnEnemy()
@@ -42,6 +47,8 @@ public class Main : MonoBehaviour
 
     public void DelayedRestart ()
     {
+        ScoreManager.ShowBestScore();
+        CancelInvoke();
         Invoke(nameof(Restart), gameRestartDelay);
     }
 

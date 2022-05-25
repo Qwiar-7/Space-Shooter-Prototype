@@ -448,7 +448,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b3bb2f9062687c49b8b122f6d0c1c81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 3.5
+  radius: 3.6
   keepOnScreen: 0
   isOnScreen: 1
   cameraWidth: 0
@@ -475,7 +475,7 @@ MonoBehaviour:
   score: 100
   showDamageDuration: 0.1
   prefabPowerUp: {fileID: 7094129368567732144, guid: 7ccf526534f173b448c6b86ba6bda7d9, type: 3}
-  powerUpFrequency: 0100000006000000
+  powerUpFrequency: 020000000300000006000000
   powerUpDropChance: 1
   originalColors: []
   materials: []
@@ -506,3 +506,4 @@ MonoBehaviour:
     protectedBy: []
     GameObj: {fileID: 0}
     material: {fileID: 0}
+  numberOfMoves: 5

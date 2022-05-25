@@ -53,8 +53,11 @@ public class Enemy_3 : Enemy
         // Интерполировать кривую Безье по трем точкам
         Vector3 pos01, pos12;
         u -= 0.2f * Mathf.Sin(u * Mathf.PI * 2);
-        pos01 = (1 - u) * points[0] + u * points[1];
-        pos12 = (1 - u) * points[1] + u * points[2];
-        Position = (1 - u) * pos01 + u * pos12;
+        //pos01 = (1 - u) * points[0] + u * points[1];
+        //pos12 = (1 - u) * points[1] + u * points[2];
+        //Position = (1 - u) * pos01 + u * pos12;
+        pos01 = points[0] + (points[1] - points[0]) * u;
+        pos12 = points[1] + (points[2] - points[1]) * u;
+        Position = pos01 + (pos12 - pos01) * u;
     }
 }

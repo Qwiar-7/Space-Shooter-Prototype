@@ -12,6 +12,7 @@ public class Parallax : MonoBehaviour
 
     private float panelHeight; // Высота каждой панели
     private float depth; // Глубина панелей (то есть pos.z)
+    float posY, posX = 0;
 
     private void Start()
     {
@@ -25,7 +26,6 @@ public class Parallax : MonoBehaviour
 
     private void Update()
     {
-        float posY, posX = 0;
         posY = Time.time * scrollSpeed % panelHeight + (panelHeight * 0.5f);
         if (poi != null)
         {

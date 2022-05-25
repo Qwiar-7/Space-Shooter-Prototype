@@ -57,6 +57,7 @@ public class Enemy : MonoBehaviour
     private void OnCollisionEnter(Collision otherCollision)
     {
         GameObject otherGO = otherCollision.gameObject;
+        if (notifiedOfDestruction) return;
         switch (otherGO.tag)
         {
             case "ProjectileHero":
@@ -73,12 +74,17 @@ public class Enemy : MonoBehaviour
                 ShowDamage();
                 // Получить разрушающую силу из WEAP_DICT в классе Main,
                 health -= projectileHero.damage;
+                health -= projectileHero.continuousDamage * Time.deltaTime;
                 if (health <= 0)
                 {
-                    // Сообщить объекту-одиночке Main об уничтожении
+                    // Сообщить об уничтожении
                     if (!notifiedOfDestruction)
+                    {
                         PowerUpDrop();
+                        ScoreManager.UpdateCurrentScore(score);
+                    }
                     notifiedOfDestruction = true;
+
                     Destroy(this.gameObject);
                 }
                 Destroy(otherGO);

@@ -377,7 +377,7 @@ MonoBehaviour:
   score: 100
   showDamageDuration: 0.1
   prefabPowerUp: {fileID: 7094129368567732144, guid: 7ccf526534f173b448c6b86ba6bda7d9, type: 3}
-  powerUpFrequency: 0100000006000000
+  powerUpFrequency: 020000000300000006000000
   powerUpDropChance: 0.5
   originalColors: []
   materials: []

@@ -51,7 +51,11 @@ public class Hero : MonoBehaviour
     private void Start()
     {
         ClearWeapons();
-        weapons[0].SetType(WeaponType.phaser);
+        weapons[0].SetType(WeaponType.laser);
+        weapons[1].SetType(WeaponType.laser);
+        weapons[2].SetType(WeaponType.laser);
+        weapons[3].SetType(WeaponType.laser);
+        weapons[4].SetType(WeaponType.laser);
     }
 
     private void Update()
