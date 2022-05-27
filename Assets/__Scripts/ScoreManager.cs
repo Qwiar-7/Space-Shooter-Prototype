@@ -32,6 +32,7 @@ public class ScoreManager : MonoBehaviour
 
     public static void ShowBestScore()
     {
+        currentScoreText.text = "Текущий счёт: " + currentScore;
         if (bestScore < currentScore)
         {
             bestScore = currentScore;

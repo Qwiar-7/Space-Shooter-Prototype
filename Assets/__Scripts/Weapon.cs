@@ -13,6 +13,7 @@ public enum WeaponType
     phaser,
     missile,
     laser,
+    turret,
     shield //Увеличивает shieldLevel
 }
 
@@ -38,14 +39,17 @@ public class WeaponParameters
 public class Weapon : MonoBehaviour
 {
     static public Transform PROJECTILE_ANCHOR;
+
     [Header("Set Dynamically")]
     public WeaponType type = WeaponType.none;
     public WeaponParameters weaponParam;
     public GameObject collar;
     public float lastShotTime;
     private Renderer collarRend;
+    public bool isCharged;
 
     LaserProjectile projectile;
+    public Missile missile;
 
     private void Start()
     {
@@ -62,7 +66,6 @@ public class Weapon : MonoBehaviour
             PROJECTILE_ANCHOR = go.transform;
         }
     }
-
     public void SetType(WeaponType weaponType)
     {
         type = weaponType;
@@ -80,7 +83,7 @@ public class Weapon : MonoBehaviour
         lastShotTime = -weaponParam.delayBetweenShots; // Сразу после установки _type можно выстрелить
     }
 
-    public void MakeShot()
+    public virtual void MakeShot()
     {
         // Если this.gameObject неактивен, выйти
         if (!gameObject.activeInHierarchy) return;
@@ -123,13 +126,43 @@ public class Weapon : MonoBehaviour
         }
         else if (type == WeaponType.laser)
         {
-            if (projectile != null) return;
+            if (projectile != null)
+            {
+                return;
+            }
             projectile = MakeLaserShot();
             projectile.transform.position = collar.transform.position + new Vector3(0, 50, 0);
             projectile.currentWeapon = this;
         }
     }
 
+    public void AddMissile()
+    {
+        GameObject gameObj = Instantiate(weaponParam.projectilePrefab);
+        gameObj.transform.position = transform.position;
+        gameObj.transform.SetParent(PROJECTILE_ANCHOR, true);
+        missile = gameObj.GetComponent<Missile>();
+        missile.currentMissileLauncher = this;
+        lastShotTime = Time.time;
+        isCharged = true;
+    }
+    public void MakeAlternateShot()
+    {
+        if (transform.parent.gameObject.CompareTag("Hero"))
+        {
+            missile.gameObject.tag = "ProjectileHero";
+            missile.gameObject.layer = 10;
+        }
+        else
+        {
+            missile.gameObject.tag = "ProjectileEnemy";
+            missile.gameObject.layer = 11;
+        }
+        isCharged = false;
+        missile.isLaunched = true;
+        missile.smoke.SetActive(true);
+        missile.launchTime = Time.time;
+    }
     public Projectile MakeProjectileShot()
     {
         GameObject gameObj = Instantiate(weaponParam.projectilePrefab);

@@ -126,7 +126,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
-  continuousDamage: 5
+  continuousDamage: 10
   rigid: {fileID: 0}
   type: 0
+  timeDuration: 1
+  originalMaterial: {fileID: 2100000, guid: 507eef242d1edbd4f9649d45b6b206f6, type: 2}
+  changedMaterial: {fileID: 2100000, guid: 685bce08219680345930df0d2fc21a46, type: 2}
   currentWeapon: {fileID: 0}
+  timeStart: 0
+  isNormalColor: 0

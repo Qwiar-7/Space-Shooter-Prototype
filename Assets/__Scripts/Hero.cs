@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,11 +11,15 @@ public class Hero : MonoBehaviour
     public float rollMultiplier = -45;
     public float pitchMultiplier = 30;
     public Weapon[] weapons;
+    public Turret turret;
+    public Weapon[] missileLaunchers;
     public WeaponParameters[] weaponParams;
+    public GameObject explosionPrefab;
 
     [Header("Set Dynamically")]
     [SerializeField]
     private float _shieldLevel = 4;
+    public bool isDead = false;
 
     private GameObject lastTriggeredGameObj = null;
 
@@ -28,6 +31,9 @@ public class Hero : MonoBehaviour
             _shieldLevel = Mathf.Min(value, 4);
             if (value < 0)
             {
+                GameObject explosion = Instantiate(explosionPrefab);
+                explosion.transform.position = transform.position;
+                isDead = true;
                 Destroy(this.gameObject);
                 Main.mainObj.DelayedRestart();
             }
@@ -56,6 +62,10 @@ public class Hero : MonoBehaviour
         weapons[2].SetType(WeaponType.laser);
         weapons[3].SetType(WeaponType.laser);
         weapons[4].SetType(WeaponType.laser);
+        turret.SetType(WeaponType.turret);
+        turret.gameObject.SetActive(false);
+        missileLaunchers[0].SetType(WeaponType.missile);
+        missileLaunchers[1].SetType(WeaponType.missile);
     }
 
     private void Update()
@@ -69,7 +79,15 @@ public class Hero : MonoBehaviour
         
         transform.SetPositionAndRotation(position, Quaternion.Euler(yAxis * pitchMultiplier, xAxis * rollMultiplier, 0));
 
-        //if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0))
+       if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.JoystickButton2))
+            foreach (var missilelauncher in missileLaunchers)
+            {
+                if (missilelauncher.isCharged)
+                {
+                    missilelauncher.MakeAlternateShot();
+                    break;
+                }
+            }
 
         // Сначала проверить нажатие клавиши: Axis("Jump")
         if (Input.GetAxis("Jump") == 1)
@@ -131,6 +149,16 @@ public class Hero : MonoBehaviour
             case WeaponType.shield:
                 ShieldLevel++;
                 break;
+            case WeaponType.turret:
+                turret.gameObject.SetActive(true);
+                turret.isCombatModeOn = true;
+                Invoke(nameof(DisableTurret), turret.turretTimeWork);
+                break;
+            case WeaponType.missile:
+                Weapon missileLauncher = GetEmptyMissileLauncherSlot();
+                if (missileLauncher != null)
+                    missileLauncher.AddMissile();
+                break;
             default:
                 if (powerUp.type == weapons[0].type)
                 {
@@ -159,9 +187,24 @@ public class Hero : MonoBehaviour
         return null;
     }
 
+    Weapon GetEmptyMissileLauncherSlot()
+    {
+        for (int i = 0; i < missileLaunchers.Length; i++)
+        {
+            if (missileLaunchers[i].isCharged == false)
+            { return missileLaunchers[i]; }
+        }
+        return null;
+    }
+
     void ClearWeapons()
     {
         foreach (Weapon weapon in weapons)
         { weapon.SetType(WeaponType.none);}
+    }
+
+    void DisableTurret()
+    {
+        turret.isCombatModeOn = false;
     }
 }

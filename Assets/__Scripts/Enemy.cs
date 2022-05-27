@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour
     public GameObject prefabPowerUp;
     public WeaponType[] powerUpFrequency = new WeaponType[] { WeaponType.blaster, WeaponType.shield };
     public float powerUpDropChance = 1f; //Вероятность сбросить бонус
+    public GameObject explosionPrefab;
 
     [Header("Set Dynamically: Enemy")]
     public Color[] originalColors;
@@ -56,17 +57,19 @@ public class Enemy : MonoBehaviour
 
     private void OnCollisionEnter(Collision otherCollision)
     {
-        GameObject otherGO = otherCollision.gameObject;
         if (notifiedOfDestruction) return;
+        GameObject otherGO = otherCollision.gameObject;
         switch (otherGO.tag)
         {
             case "ProjectileHero":
                 Projectile projectileHero = otherGO.GetComponent<Projectile>();
+                bool isLaser = otherGO.GetComponent<LaserProjectile>() != null;
                 // Если вражеский корабль за границами экрана,
                 // не наносить ему повреждений.
                 if (!boundsCheck.isOnScreen)
                 {
-                    Destroy(otherGO);
+                    if (!isLaser)
+                        Destroy(otherGO);
                     break;
                 }
 
@@ -74,7 +77,7 @@ public class Enemy : MonoBehaviour
                 ShowDamage();
                 // Получить разрушающую силу из WEAP_DICT в классе Main,
                 health -= projectileHero.damage;
-                health -= projectileHero.continuousDamage * Time.deltaTime;
+                health -= projectileHero.continuousDamage * Time.fixedDeltaTime;
                 if (health <= 0)
                 {
                     // Сообщить об уничтожении
@@ -87,7 +90,58 @@ public class Enemy : MonoBehaviour
 
                     Destroy(this.gameObject);
                 }
-                Destroy(otherGO);
+                Missile missile = otherGO.GetComponent<Missile>();
+                if (missile != null)
+                {
+                    GameObject explosion = Instantiate(explosionPrefab);
+                    explosion.transform.position = missile.transform.position;
+                }
+
+                if (!isLaser) //проверка на лазер
+                    Destroy(otherGO);
+                break;
+            default:
+                print("Enemy hit by non-ProjectileHero: " + otherGO.name);
+                break;
+        }
+    }
+    private void OnCollisionStay(Collision otherCollision)
+    {
+        if (notifiedOfDestruction) return;
+        GameObject otherGO = otherCollision.gameObject;
+        switch (otherGO.tag)
+        {
+            case "ProjectileHero":
+                Projectile projectileHero = otherGO.GetComponent<Projectile>();
+                bool isLaser = otherGO.GetComponent<LaserProjectile>() != null;
+                // Если вражеский корабль за границами экрана,
+                // не наносить ему повреждений.
+                if (!boundsCheck.isOnScreen)
+                {
+                    if (!isLaser)
+                        Destroy(otherGO);
+                    break;
+                }
+
+                // Поразить вражеский корабль
+                ShowDamage();
+                // Получить разрушающую силу из WEAP_DICT в классе Main,
+                health -= projectileHero.damage;
+                health -= projectileHero.continuousDamage * Time.fixedDeltaTime;
+                if (health <= 0)
+                {
+                    // Сообщить об уничтожении
+                    if (!notifiedOfDestruction)
+                    {
+                        PowerUpDrop();
+                        ScoreManager.UpdateCurrentScore(score);
+                    }
+                    notifiedOfDestruction = true;
+
+                    Destroy(this.gameObject);
+                }
+                if (!isLaser) //проверка на лазер
+                    Destroy(otherGO);
                 break;
             default:
                 print("Enemy hit by non-ProjectileHero: " + otherGO.name);

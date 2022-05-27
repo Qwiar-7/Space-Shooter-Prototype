@@ -155,11 +155,20 @@ public class Enemy_4 : Enemy
         {
             case "ProjectileHero":
                 Projectile projectile = otherGO.GetComponent<Projectile>();
+                bool isLaser = otherGO.GetComponent<LaserProjectile>() != null;
                 // Если корабль за границами экрана, не повреждать его.
                 if (!boundsCheck.isOnScreen)
                 {
-                    Destroy(otherGO);
+                    if (!isLaser)
+                        Destroy(otherGO);
                     break;
+                }
+
+                Missile missile = otherGO.GetComponent<Missile>();
+                if (missile != null)
+                {
+                    GameObject explosion = Instantiate(explosionPrefab);
+                    explosion.transform.position = missile.transform.position;
                 }
 
                 // Поразить вражеский корабль
@@ -180,7 +189,8 @@ public class Enemy_4 : Enemy
                         // не разрушена...
                         if (!Destroyed(str))
                         {
-                            Destroy(otherGO); // ...не наносить повреждений этой части Уничтожить снаряд ProjectileHero
+                            if (!isLaser)
+                                Destroy(otherGO); // ...не наносить повреждений этой части Уничтожить снаряд ProjectileHero
                             return; // выйти, не повреждая Enemy_4
                         }
                     }
@@ -189,7 +199,7 @@ public class Enemy_4 : Enemy
                 // Эта часть не защищена, нанести ей повреждение
                 // Получить разрушающую силу из Projectile.type и Main.WEAP_DICT
                 hitedPart.health -= projectile.damage;
-                hitedPart.health -= projectile.continuousDamage * Time.deltaTime;
+                hitedPart.health -= projectile.continuousDamage * Time.fixedDeltaTime;
                 // Показать эффект попадания в часть
                 ShowLocalizedDamage(hitedPart.material);
                 if (hitedPart.health <= 0)
@@ -218,7 +228,86 @@ public class Enemy_4 : Enemy
                     notifiedOfDestruction = true;
                     Destroy(this.gameObject);
                 }
-                Destroy(otherGO); // Уничтожить снаряд ProjectileHero
+                if (!isLaser)
+                    Destroy(otherGO); // Уничтожить снаряд ProjectileHero
+                break;
+        }
+    }
+
+    private void OnCollisionStay(Collision otherCollision)
+    {
+        GameObject otherGO = otherCollision.gameObject;
+        switch (otherGO.tag)
+        {
+            case "ProjectileHero":
+                Projectile projectile = otherGO.GetComponent<Projectile>();
+                bool isLaser = otherGO.GetComponent<LaserProjectile>() != null;
+                // Если корабль за границами экрана, не повреждать его.
+                if (!boundsCheck.isOnScreen)
+                {
+                    if (!isLaser)
+                        Destroy(otherGO);
+                    break;
+                }
+                // Поразить вражеский корабль
+                GameObject hitedGO = otherCollision.contacts[0].thisCollider.gameObject;
+                Part hitedPart = FindPart(hitedGO);
+                if (hitedPart == null)
+                {
+                    hitedGO = otherCollision.contacts[0].otherCollider.gameObject;
+                    hitedPart = FindPart(hitedGO);
+                }
+
+                // Проверить, защищена ли еще эта часть корабля
+                if (hitedPart.protectedBy != null)
+                {
+                    foreach (string str in hitedPart.protectedBy)
+                    {
+                        // Если хотя бы одна из защищающих частей еще
+                        // не разрушена...
+                        if (!Destroyed(str))
+                        {
+                            if (!isLaser)
+                                Destroy(otherGO); // ...не наносить повреждений этой части Уничтожить снаряд ProjectileHero
+                            return; // выйти, не повреждая Enemy_4
+                        }
+                    }
+                }
+
+                // Эта часть не защищена, нанести ей повреждение
+                // Получить разрушающую силу из Projectile.type и Main.WEAP_DICT
+                hitedPart.health -= projectile.damage;
+                hitedPart.health -= projectile.continuousDamage * Time.fixedDeltaTime;
+                // Показать эффект попадания в часть
+                ShowLocalizedDamage(hitedPart.material);
+                if (hitedPart.health <= 0)
+                {
+                    // Вместо разрушения всего корабля
+                    // деактивировать уничтоженную часть
+                    hitedPart.GameObj.SetActive(false);
+                }
+                // Проверить, был ли корабль полностью разрушен
+                bool allDestroyed = true; // Предположить, что разрушен
+                foreach (Part part in parts)
+                {
+                    if (!Destroyed(part))
+                    {
+                        allDestroyed = false;
+                        break;
+                    }
+                }
+                if (allDestroyed)
+                {
+                    if (!notifiedOfDestruction)
+                    {
+                        PowerUpDrop();
+                        ScoreManager.UpdateCurrentScore(score);
+                    }
+                    notifiedOfDestruction = true;
+                    Destroy(this.gameObject);
+                }
+                if (!isLaser)
+                    Destroy(otherGO); // Уничтожить снаряд ProjectileHero
                 break;
         }
     }
