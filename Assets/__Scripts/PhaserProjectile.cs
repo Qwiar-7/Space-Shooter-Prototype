@@ -2,13 +2,14 @@ using UnityEngine;
 
 public class PhaserProjectile : Projectile
 {
-    [Header("PhaserProjectile Params")]
+    [Header("Set in Inspector: Phaser")]
     public float waveFrequency = 1; //число секунд полного цикла синусойды
     public float waveWidth = 1; //ширина синусойды в метрах
-    public bool isReverse = false;
 
+    [Header("Set Dynamically: Phaser")]
     private float x0; // начальное значение координаты х
     private float birthTime;
+    public bool isReverse = false;
 
     private void Start()
     {

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy_3 : Enemy
@@ -9,14 +7,11 @@ public class Enemy_3 : Enemy
     [Header("Set in Inspector: Enemy_3")]
     public float lifeTime = 5;
 
-    [Header("Set Dynamically: Enemy_3")]
-    public Vector3[] points;
-    public float birthTime;
-
+    private Vector3[] points;
+    private float birthTime;
     private void Start()
     {
         points = new Vector3[3];
-
         // Начальная позиция уже определена в Main.SpawnEnemy()
         points[0] = Position;
 
@@ -36,10 +31,8 @@ public class Enemy_3 : Enemy
         tempPos.y = Position.y;
         tempPos.x = Random.Range(xMin, xMax);
         points[2] = tempPos;
-
         birthTime = Time.time;
     }
-
     public override void Move()
     {
         float u = (Time.time - birthTime) / lifeTime;
@@ -49,13 +42,8 @@ public class Enemy_3 : Enemy
             Destroy(this.gameObject);
             return;
         }
-
-        // Интерполировать кривую Безье по трем точкам
-        Vector3 pos01, pos12;
+        Vector3 pos01, pos12;   // Интерполировать кривую Безье по трем точкам
         u -= 0.2f * Mathf.Sin(u * Mathf.PI * 2);
-        //pos01 = (1 - u) * points[0] + u * points[1];
-        //pos12 = (1 - u) * points[1] + u * points[2];
-        //Position = (1 - u) * pos01 + u * pos12;
         pos01 = points[0] + (points[1] - points[0]) * u;
         pos12 = points[1] + (points[2] - points[1]) * u;
         Position = pos01 + (pos12 - pos01) * u;

@@ -7,14 +7,11 @@ public class Shield : MonoBehaviour
 
     [Header("Set Dynamically")]
     public int visibleShieldLevel = 0;
-
-    Material material;
-
+    private Material material;
     private void Start()
     {
         material = GetComponent<Renderer>().material;
     }
-
     private void Update()
     {
         int currentLevel = Mathf.FloorToInt(Hero.heroObj.ShieldLevel);

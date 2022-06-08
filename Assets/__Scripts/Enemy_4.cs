@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -29,8 +27,7 @@ public class Enemy_4 : Enemy
 
     private Vector3 pos0, pos1; // Две точки для интерполяции
     private float timeStart; // Время создания этого корабля
-    private readonly float duration = 4; // Продолжительность перемещения
-
+    private readonly float movingTime = 4; // Продолжительность перемещения
     private void Start()
     {
         // Начальная позиция уже выбрана в Main.SpawnEnemy(),
@@ -49,7 +46,6 @@ public class Enemy_4 : Enemy
             }
         }
     }
-
     void InitMovement()
     {
         pos0 = pos1;
@@ -62,7 +58,6 @@ public class Enemy_4 : Enemy
         // Сбросить время
         timeStart = Time.time;
     }
-
     void LastMovement()
     {
         pos0 = pos1;
@@ -76,17 +71,16 @@ public class Enemy_4 : Enemy
         // Сбросить время
         timeStart = Time.time;
     }
-
     public override void Move()
     {
-        float u = (Time.time - timeStart) / duration;
+        float u = (Time.time - timeStart) / movingTime;
 
         if (u >= 1)
         {
             if (numberOfMoves <= 1)
             {
                 LastMovement();
-                Invoke(nameof(EnemyDestroy), duration);
+                Invoke(nameof(EnemyDestroy), movingTime);
             }
             else
                 InitMovement();
@@ -97,7 +91,6 @@ public class Enemy_4 : Enemy
         u = 1 - Mathf.Pow(1-u, 2); // Применить плавное замедление
         Position = (1 - u) * pos0 + u * pos1; // Простая линейная интерполяция
     }
-
     // Эти две функции выполняют поиск части в массиве parts п
     // по имени или по ссылке на игровой объект
     Part FindPart (GameObject GameObj)
@@ -109,7 +102,6 @@ public class Enemy_4 : Enemy
         }
         return null;
     }
-
     Part FindPart(string partName)
     {
         foreach (Part part in parts)
@@ -119,18 +111,11 @@ public class Enemy_4 : Enemy
         }
         return null;
     }
-
     // Эти функции возвращают true, если данная часть уничтожена
-    /*bool Destroyed(GameObject GameObj)
-    {
-        return (Destroyed(FindPart(GameObj)));
-    }*/
-
     bool Destroyed(string name)
     {
         return (Destroyed(FindPart(name)));
     }
-
     bool Destroyed(Part part)
     {
         if (part == null) return true; // Если ссылка на часть не была передана - вернуть true (то есть: да, была уничтожена)
@@ -139,7 +124,6 @@ public class Enemy_4 : Enemy
         // Если prt.health <= 0, вернуть true (да, была уничтожена)
         return (part.health <= 0);
     }
-
     // Окрашивает в красный только одну часть, а не весь корабль.
     void ShowLocalizedDamage(Material material)
     {
@@ -147,15 +131,28 @@ public class Enemy_4 : Enemy
         damageDoneTime = Time.time + showDamageDuration;
         showingDamage = true;
     }
-
     private void OnCollisionEnter(Collision otherCollision)
     {
+        checkObjectInCollision(otherCollision);
+    }
+    private void OnCollisionStay(Collision otherCollision)
+    {
+        checkObjectInCollision(otherCollision);
+    }
+    void checkObjectInCollision(Collision otherCollision)
+    {
         GameObject otherGO = otherCollision.gameObject;
-        switch(otherGO.tag)
+        Projectile projectile = otherGO.GetComponent<Projectile>();
+        bool isLaser = otherGO.GetComponent<LaserProjectile>() != null;
+        if (notifiedOfDestruction)
+        {
+            if (!isLaser)
+                Destroy(otherGO);
+            return;
+        }
+        switch (otherGO.tag)
         {
             case "ProjectileHero":
-                Projectile projectile = otherGO.GetComponent<Projectile>();
-                bool isLaser = otherGO.GetComponent<LaserProjectile>() != null;
                 // Если корабль за границами экрана, не повреждать его.
                 if (!boundsCheck.isOnScreen)
                 {
@@ -170,7 +167,6 @@ public class Enemy_4 : Enemy
                     GameObject explosion = Instantiate(explosionPrefab);
                     explosion.transform.position = missile.transform.position;
                 }
-
                 // Поразить вражеский корабль
                 GameObject hitedGO = otherCollision.contacts[0].thisCollider.gameObject;
                 Part hitedPart = FindPart(hitedGO);
@@ -179,85 +175,6 @@ public class Enemy_4 : Enemy
                     hitedGO = otherCollision.contacts[0].otherCollider.gameObject;
                     hitedPart = FindPart(hitedGO);
                 }
-
-                // Проверить, защищена ли еще эта часть корабля
-                if (hitedPart.protectedBy != null)
-                {
-                    foreach( string str in hitedPart.protectedBy)
-                    {
-                        // Если хотя бы одна из защищающих частей еще
-                        // не разрушена...
-                        if (!Destroyed(str))
-                        {
-                            if (!isLaser)
-                                Destroy(otherGO); // ...не наносить повреждений этой части Уничтожить снаряд ProjectileHero
-                            return; // выйти, не повреждая Enemy_4
-                        }
-                    }
-                }
-
-                // Эта часть не защищена, нанести ей повреждение
-                // Получить разрушающую силу из Projectile.type и Main.WEAP_DICT
-                hitedPart.health -= projectile.damage;
-                hitedPart.health -= projectile.continuousDamage * Time.fixedDeltaTime;
-                // Показать эффект попадания в часть
-                ShowLocalizedDamage(hitedPart.material);
-                if (hitedPart.health <= 0)
-                {
-                    // Вместо разрушения всего корабля
-                    // деактивировать уничтоженную часть
-                    hitedPart.GameObj.SetActive(false);
-                }
-                // Проверить, был ли корабль полностью разрушен
-                bool allDestroyed = true; // Предположить, что разрушен
-                foreach (Part part in parts)
-                {
-                    if(!Destroyed(part))
-                    {
-                        allDestroyed = false;
-                        break;
-                    }
-                }
-                if (allDestroyed)
-                {
-                    if (!notifiedOfDestruction)
-                    {
-                        PowerUpDrop();
-                        ScoreManager.UpdateCurrentScore(score);
-                    }
-                    notifiedOfDestruction = true;
-                    Destroy(this.gameObject);
-                }
-                if (!isLaser)
-                    Destroy(otherGO); // Уничтожить снаряд ProjectileHero
-                break;
-        }
-    }
-
-    private void OnCollisionStay(Collision otherCollision)
-    {
-        GameObject otherGO = otherCollision.gameObject;
-        switch (otherGO.tag)
-        {
-            case "ProjectileHero":
-                Projectile projectile = otherGO.GetComponent<Projectile>();
-                bool isLaser = otherGO.GetComponent<LaserProjectile>() != null;
-                // Если корабль за границами экрана, не повреждать его.
-                if (!boundsCheck.isOnScreen)
-                {
-                    if (!isLaser)
-                        Destroy(otherGO);
-                    break;
-                }
-                // Поразить вражеский корабль
-                GameObject hitedGO = otherCollision.contacts[0].thisCollider.gameObject;
-                Part hitedPart = FindPart(hitedGO);
-                if (hitedPart == null)
-                {
-                    hitedGO = otherCollision.contacts[0].otherCollider.gameObject;
-                    hitedPart = FindPart(hitedGO);
-                }
-
                 // Проверить, защищена ли еще эта часть корабля
                 if (hitedPart.protectedBy != null)
                 {
@@ -273,7 +190,6 @@ public class Enemy_4 : Enemy
                         }
                     }
                 }
-
                 // Эта часть не защищена, нанести ей повреждение
                 // Получить разрушающую силу из Projectile.type и Main.WEAP_DICT
                 hitedPart.health -= projectile.damage;
@@ -311,7 +227,6 @@ public class Enemy_4 : Enemy
                 break;
         }
     }
-
     void EnemyDestroy()
     {
         Destroy(gameObject);

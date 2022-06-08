@@ -1,19 +1,22 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Missile : Projectile
 {
-    public bool isLaunched = false;
-    public Weapon currentMissileLauncher;
-    public GameObject smoke;
-    public GameObject explosionPrefab;
-    Vector3 closestEnemy;
-    public float accelerationTime = 0.5f;
-    public float launchTime;
-
     Dictionary<float, Vector3> distances;
+
+    [Header("Set in Inspector: Missile")]
+    public GameObject explosionPrefab;
+    public float accelerationTime = 0.5f;
+    public float timeBeforeDestroy = 5f;
+
+    [Header("Set Dynamically: Missile")]
+    public float launchTime;
+    public bool isLaunched = false;
     public bool isEnemyVisible = false;
+    public GameObject smoke;
+    public Weapon currentMissileLauncher;
+    Vector3 closestEnemy;
     void Awake()
     {
         bndCheck = GetComponent<BoundsCheck>();
@@ -35,6 +38,11 @@ public class Missile : Projectile
         if (!isLaunched)
         {
             transform.position = currentMissileLauncher.transform.position;
+            return;
+        }
+        if(Time.time - launchTime > timeBeforeDestroy)
+        {
+            Destroy(gameObject);
             return;
         }
         FindClosestEnemy();

@@ -2,36 +2,33 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+    [Header("Set in Inspector : Projectile")]
     public float damage = 1f;
     public float continuousDamage = 0;
-    protected BoundsCheck bndCheck;
-    protected Renderer rend;
 
-    [Header("Set Dynamically")]
+    [Header("Set Dynamically : Projectile")]
     public Rigidbody rigid;
     [SerializeField]
     protected WeaponType type;
-
+    protected BoundsCheck bndCheck;
+    protected Renderer rend;
     public WeaponType Type //возможно помен€ть, setType?
     {
         get { return type; }
         set { SetType(value); }
     }
-
     private void Awake()
     {
         bndCheck = GetComponent<BoundsCheck>();
         rend = GetComponent<Renderer>();
         rigid = GetComponent<Rigidbody>();
     }
-
     private void Update()
     {
         //удалить снар€д после выхода за пределы экрана
         if (bndCheck.offUp)
             Destroy(gameObject);
     }
-
     /// <summary>
     /// »змен€ет скрытое поле _type и устанавливает цвет этого снар€да,
     /// как определено в WeaponDefinition.

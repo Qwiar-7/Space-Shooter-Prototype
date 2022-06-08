@@ -2,20 +2,18 @@ using UnityEngine;
 
 public class Enemy_1 : Enemy
 {
-    [Header("Set in Inspector")]
+    [Header("Set in Inspector: Enemy_1")]
     public float waveFrequency = 2; //число секунд полного цикла синусойды
     public float waveWidth = 4; //ширина синусойды в метрах
     public float waveRotY = 30; //градус поворота
 
     private float x0; // начальное значение координаты х
     private float birthTime;
-
     private void Start()
     {
         x0 = Position.x;
         birthTime = Time.time;
     }
-
     public override void Move()
     {
         Vector3 tempPosition = Position;

@@ -4947,17 +4947,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: beb107f7e46b98345acf22a8d962aa93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 10
+  damage: 25
   continuousDamage: 0
   rigid: {fileID: 0}
   type: 0
-  isLaunched: 0
-  currentMissileLauncher: {fileID: 0}
-  smoke: {fileID: 0}
   explosionPrefab: {fileID: 5471670382308985465, guid: ab41d217bcde9f247b3750cd3feec906, type: 3}
-  accelerationTime: 1
+  accelerationTime: 1.5
+  timeBeforeDestroy: 5
   launchTime: 0
+  isLaunched: 0
   isEnemyVisible: 0
+  smoke: {fileID: 0}
+  currentMissileLauncher: {fileID: 0}
 --- !u!114 &7742967660666698597
 MonoBehaviour:
   m_ObjectHideFlags: 0

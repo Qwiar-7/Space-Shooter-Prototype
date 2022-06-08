@@ -7,13 +7,11 @@ public class Enemy_2 : Enemy
     public float sinEccentricity = 0.6f;
     public float lifeTime = 6;
 
-    [Header("Set Dynamically: Enemy_2")]
     // Enemy_2 использует линейную интерполяцию между двумя точками,
     // изменяя результат по синусоиде
-    public Vector3 pos0;
-    public Vector3 pos1;
-    public float birthTime;
-
+    private Vector3 pos0;
+    private Vector3 pos1;
+    private float birthTime;
     private void Start()
     {
         // Выбрать случайную точку на левой границе экрана
@@ -32,24 +30,19 @@ public class Enemy_2 : Enemy
             pos0.x *= -1;
             pos1.x *= -1;
         }
-
         birthTime = Time.time;
     }
-
     public override void Move()
     {
         // Кривые Безье вычисляются на основе значения и между 0 и 1
         float u = (Time.time - birthTime) / lifeTime;
 
-        if (u > 100)
+        if (u > 1)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
             return;
         }
-
         u += sinEccentricity * (Mathf.Sin(u * Mathf.PI * 2)); //для ослабления эффекта замедления
-
-        //Position = (1 - u) * pos0 + u * pos1;
         Position = pos0 + (pos1 - pos0) * u;
     }
 }

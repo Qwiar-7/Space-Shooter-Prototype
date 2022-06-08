@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5814615148040578281}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20, y: 10, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5814615149894184278}
@@ -48,7 +48,7 @@ Rigidbody:
   m_AngularDrag: 0.05
   m_UseGravity: 0
   m_IsKinematic: 1
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 120
   m_CollisionDetection: 0
 --- !u!114 &8826546614936291234
@@ -84,20 +84,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5f767a2c2a0fdb4c9e14850c167dbef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  speed: 20
   fireRate: 0.3
-  health: 4
-  score: 100
+  health: 5
   showDamageDuration: 0.1
+  powerUpDropChance: 0.5
+  score: 5
   prefabPowerUp: {fileID: 7094129368567732144, guid: 7ccf526534f173b448c6b86ba6bda7d9, type: 3}
-  powerUpFrequency: 0600000004000000
-  powerUpDropChance: 1
   explosionPrefab: {fileID: 5471670382308985465, guid: ab41d217bcde9f247b3750cd3feec906, type: 3}
+  powerUpFrequency: 010000000100000001000000070000000700000002000000
+  damageDoneTime: 0
+  showingDamage: 0
+  notifiedOfDestruction: 0
   originalColors: []
   materials: []
-  showingDamage: 0
-  damageDoneTime: 0
-  notifiedOfDestruction: 0
 --- !u!1 &5814615149894184279
 GameObject:
   m_ObjectHideFlags: 0
@@ -158,7 +158,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 0d1dc6a13a717454692bc7201a84e2e3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -189,7 +189,7 @@ SphereCollider:
   m_GameObject: {fileID: 5814615149894184279}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
@@ -253,7 +253,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 2ff9ba0afd608b34989ead7d25be934d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

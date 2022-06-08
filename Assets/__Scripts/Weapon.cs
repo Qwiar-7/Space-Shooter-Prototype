@@ -1,6 +1,4 @@
 using UnityEngine;
-
-
 /// <summary>
 /// Это перечисление всех возможных типов оружия.
 /// Также включает тип "shield", чтобы дать возможность совершенствовать защиту.
@@ -14,10 +12,9 @@ public enum WeaponType
     missile,
     laser,
     turret,
-    shield //Увеличивает shieldLevel
+    shield, //Увеличивает shieldLevel
+    bossCore
 }
-
-
 /// <summary>
 /// Класс WeaponDefinition позволяет настраивать свойства
 /// конкретного вида оружия в инспекторе. Для этого класс Main
@@ -50,7 +47,6 @@ public class Weapon : MonoBehaviour
 
     LaserProjectile projectile;
     public Missile missile;
-
     private void Start()
     {
         collar = transform.Find("Collar").gameObject;
@@ -82,7 +78,6 @@ public class Weapon : MonoBehaviour
         collarRend.material.color = weaponParam.color;
         lastShotTime = -weaponParam.delayBetweenShots; // Сразу после установки _type можно выстрелить
     }
-
     public virtual void MakeShot()
     {
         // Если this.gameObject неактивен, выйти
@@ -90,12 +85,12 @@ public class Weapon : MonoBehaviour
         // Если между выстрелами прошло недостаточно много времени, выйти
         if (Time.time - lastShotTime < weaponParam.delayBetweenShots) return;
         Vector3 velocity = Vector3.up * weaponParam.velocity;
-        if (transform.up.y < 0)
-        {
-            velocity.y = -velocity.y;
-        }
-        
-        if(type == WeaponType.blaster)
+        //if (transform.up.y < 0)
+        //    velocity.y = -velocity.y;
+        //velocity.y += Hero.heroObj.heroRigidbody.velocity.y * 0.15f;
+
+
+        if (type == WeaponType.blaster)
         {
             Projectile projectile;
             projectile = MakeProjectileShot();
@@ -135,7 +130,6 @@ public class Weapon : MonoBehaviour
             projectile.currentWeapon = this;
         }
     }
-
     public void AddMissile()
     {
         GameObject gameObj = Instantiate(weaponParam.projectilePrefab);
@@ -143,7 +137,6 @@ public class Weapon : MonoBehaviour
         gameObj.transform.SetParent(PROJECTILE_ANCHOR, true);
         missile = gameObj.GetComponent<Missile>();
         missile.currentMissileLauncher = this;
-        lastShotTime = Time.time;
         isCharged = true;
     }
     public void MakeAlternateShot()
@@ -161,6 +154,7 @@ public class Weapon : MonoBehaviour
         isCharged = false;
         missile.isLaunched = true;
         missile.smoke.SetActive(true);
+        lastShotTime = Time.time;
         missile.launchTime = Time.time;
     }
     public Projectile MakeProjectileShot()
@@ -183,7 +177,6 @@ public class Weapon : MonoBehaviour
         lastShotTime = Time.time;
         return (projectile);
     }
-
     public LaserProjectile MakeLaserShot()
     {
         GameObject gameObj = Instantiate(weaponParam.projectilePrefab);

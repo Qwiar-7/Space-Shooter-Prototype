@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Parallax : MonoBehaviour
@@ -10,10 +8,10 @@ public class Parallax : MonoBehaviour
     public float scrollSpeed = -30f;
     public float motionMult = 0.25f; // motionMult определяет степень реакции панелей на перемещение корабля игрока
 
+    [Header("Set Dynamically")]
     private float panelHeight; // Высота каждой панели
     private float depth; // Глубина панелей (то есть pos.z)
     float posY, posX = 0;
-
     private void Start()
     {
         panelHeight = panels[0].transform.localScale.y;
@@ -23,7 +21,6 @@ public class Parallax : MonoBehaviour
         panels[0].transform.position = new Vector3(0, 0, depth);
         panels[1].transform.position = new Vector3(0, panelHeight, depth);
     }
-
     private void Update()
     {
         posY = Time.time * scrollSpeed % panelHeight + (panelHeight * 0.5f);

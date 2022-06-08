@@ -3,15 +3,13 @@ using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
-    static Text currentScoreText;
-    static Text bestScoreText;
-
+    [Header("Set Dynamically")]
     public static int bestScore = 0;
     public static int currentScore = 0;
-
     public static GameObject BestScore;
     public static GameObject CurrentScore;
-
+    public static Text currentScoreText;
+    public static Text bestScoreText;
     private void Awake()
     {
         BestScore = GameObject.Find("BestScore");
@@ -28,11 +26,11 @@ public class ScoreManager : MonoBehaviour
             currentScoreText = CurrentScore.GetComponent<Text>();
             currentScoreText.text = "0";
         }
+        currentScore = 0;
     }
-
     public static void ShowBestScore()
     {
-        currentScoreText.text = "Текущий счёт: " + currentScore;
+        if (bestScoreText == null) return;
         if (bestScore < currentScore)
         {
             bestScore = currentScore;
@@ -41,7 +39,10 @@ public class ScoreManager : MonoBehaviour
         bestScoreText.text = "Лучший счёт: " + bestScore;
         BestScore.SetActive(true);
     }
-
+    public static void ShowCurrentScore()
+    {
+        currentScoreText.text = "Текущий счёт: " + currentScore;
+    }
     public static void UpdateCurrentScore(int score)
     {
         currentScore += score;

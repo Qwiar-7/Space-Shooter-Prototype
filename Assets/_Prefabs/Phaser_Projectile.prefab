@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 475425784615658351}
   - component: {fileID: 475425784615658350}
   - component: {fileID: 475425784615658337}
-  - component: {fileID: 475425784615658336}
   - component: {fileID: 475425784615658339}
   - component: {fileID: 475425784615658338}
   - component: {fileID: 3783826720105987944}
+  - component: {fileID: 4046302531021013126}
   m_Layer: 0
   m_Name: Phaser_Projectile
   m_TagString: Untagged
@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 475425784615658341}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.3653032, y: 17.41939, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children: []
   m_Father: {fileID: 0}
@@ -85,19 +85,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &475425784615658336
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 475425784615658341}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &475425784615658339
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -147,10 +134,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b15ca9a166bd214a9ab9fbd65682a3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 2
+  damage: 4
   continuousDamage: 0
   rigid: {fileID: 0}
   type: 0
-  waveFrequency: 1
-  waveWidth: 2
+  waveFrequency: 0.5
+  waveWidth: 5
   isReverse: 0
+--- !u!136 &4046302531021013126
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 475425784615658341}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 5
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0}

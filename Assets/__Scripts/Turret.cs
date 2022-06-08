@@ -3,15 +3,17 @@ using UnityEngine;
 
 public class Turret : Weapon
 {
-    public int turretTimeWork = 10;
-    public bool isCombatModeOn = false;
-
     Dictionary<float, Vector3> distances;
-    bool isEnemyVisible = false;
 
+    [Header("Set in Inspector: Turret")]
+    public int turretTimeWork = 10;
+
+    [Header("Set Dynamically: Turret")]
+    public float startTime;
+    bool isEnemyVisible = false;
     private void Update()
     {
-        MakeShot();
+            MakeShot();
     }
     public override void MakeShot()
     {
@@ -21,7 +23,7 @@ public class Turret : Weapon
 
         FindClosestEnemy();
 
-        if (isEnemyVisible && isCombatModeOn)
+        if (isEnemyVisible && Time.time - startTime < 10f)
         {
             Vector3 velocity = Vector3.Normalize(transform.up) * weaponParam.velocity;
             Projectile projectile;
@@ -30,7 +32,6 @@ public class Turret : Weapon
             projectile.rigid.velocity = velocity;
         }
     }
-
     private void FindClosestEnemy()
     {
         Vector3 closestEnemy;

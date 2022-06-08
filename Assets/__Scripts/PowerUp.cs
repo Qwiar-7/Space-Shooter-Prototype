@@ -3,9 +3,8 @@ using UnityEngine;
 public class PowerUp : MonoBehaviour
 {
     [Header("Set in Inspector")]
-    // Ќеобычное, но удобное применение Vector2. х хранит минимальное
-    // значение, а у - максимальное значение дл€ метода Random.Range(),
-    // который будет вызыватьс€ позже
+    // Vector2. х хранит минимальное значение,
+    // а у - максимальное значение дл€ метода Random.Range()
     public Vector2 rotationMinMax = new Vector2(15, 90);
     public Vector2 driftMinMax = new Vector2(.25f, 2);
     public float lifeTime = 6f;  // ¬рем€ в секундах существовани€ PowerUp
@@ -21,7 +20,6 @@ public class PowerUp : MonoBehaviour
     private Rigidbody rigid;
     private BoundsCheck boundsCheck;
     private Renderer cubeRenderer;
-
     private void Awake()
     {
         cube = transform.Find("Cube").gameObject;
@@ -29,7 +27,6 @@ public class PowerUp : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
         boundsCheck = GetComponent<BoundsCheck>();
         cubeRenderer = cube.GetComponent<Renderer>();
-
         // ¬ыбрать случайную скорость
         Vector3 vel = Random.onUnitSphere; // Random.onUnitSphere возвращает вектор, указывающий на случайную
         // точку, наход€щуюс€ на поверхности сферы с радиусом 1 м и с центром
@@ -38,35 +35,28 @@ public class PowerUp : MonoBehaviour
         vel.Normalize(); // Ќормализаци€ устанавливает длину Vector3 равной 1 м
         vel *= Random.Range(driftMinMax.x, driftMinMax.y);
         rigid.velocity = vel;
-
         // ”становить угол поворота этого игрового объекта равным R:[ 0, 0, 0 ]
         transform.rotation = Quaternion.identity; // Quaternion.identity равноценно отсутствию поворота.
-
         // ¬ыбрать случайную скорость вращени€ дл€ вложенного куба с
         // использованием rotMinMax.x и rotMinMax.y
         rotationPerSecond = new Vector3(Random.Range(rotationMinMax.x, rotationMinMax.y),
-            Random.Range(rotationMinMax.x, rotationMinMax.y), Random.Range(rotationMinMax.x, rotationMinMax.y));
-
+        Random.Range(rotationMinMax.x, rotationMinMax.y), Random.Range(rotationMinMax.x, rotationMinMax.y));
         birthTime = Time.time;
     }
-
     private void Update()
     {
         cube.transform.rotation = Quaternion.Euler(rotationPerSecond * Time.time);
-
         // Ёффект растворени€ куба PowerUp с течением времени
         // —о значени€ми по умолчанию бонус существует 10 секунд
         // а затем раствор€етс€ в течение 4 секунд,
         float u = (Time.time - (birthTime + lifeTime)) / fadeTime;
         // ¬ течение lifeTime секунд значение u будет <= 0. «атем оно станет
         // положительным и через fadeTime секунд станет больше 1.
-
         if (u >= 1)
         {
             Destroy(this.gameObject);
             return;
         }
-
         if (u > 0)
         {
             Color color = cubeRenderer.material.color;
@@ -77,11 +67,9 @@ public class PowerUp : MonoBehaviour
             color.a = 1f - (u * 0.5f);
             letter.color = color;
         }
-
         if (!boundsCheck.isOnScreen)
             Destroy(gameObject);
     }
-
     public void SetType (WeaponType type)
     {
         // ѕолучить WeaponDefinition из Main
@@ -92,12 +80,11 @@ public class PowerUp : MonoBehaviour
         letter.text = weaponDef.letter;
         this.type = type; // ¬ заключение установить фактический тип
     }
-
     public void AbsorbedBy(GameObject target)
     {
         // Ёта функци€ вызываетс€ классом Ќего, когда игрок подбирает бонус
         // ћожно было бы реализовать эффект поглощени€ бонуса, уменьша€ его
         // размеры в течение нескольких кадров, но пока просто уничтожим
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
 }

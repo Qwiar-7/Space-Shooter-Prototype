@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -17,16 +15,12 @@ public class BoundsCheck : MonoBehaviour
     public bool isOnScreen = true;
     public float cameraWidth;
     public float cameraHeight;
-
-    [HideInInspector]
     public bool offRight, offLeft, offUp, offDown;
-
     private void Awake()
     {
         cameraHeight = Camera.main.orthographicSize;
         cameraWidth = cameraHeight * Camera.main.aspect;
     }
-
     private void LateUpdate()
     {
         Vector3 position = transform.position;
@@ -53,7 +47,6 @@ public class BoundsCheck : MonoBehaviour
             position.y = -cameraHeight - radius;
             offDown = true;
         }
-
         isOnScreen = !(offRight || offLeft || offUp || offDown);
         //если keepOnScreen = true оставить объект в пределах экрана
         if (keepOnScreen && !isOnScreen)
@@ -62,12 +55,5 @@ public class BoundsCheck : MonoBehaviour
             isOnScreen = true;
             offRight = offLeft = offUp = offDown = false;
         }
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (!Application.isPlaying) return;
-        Vector3 boundSize = new Vector3(cameraWidth*2, cameraHeight*2, 0.1f);
-        Gizmos.DrawWireCube(Vector3.zero, boundSize);
     }
 }
