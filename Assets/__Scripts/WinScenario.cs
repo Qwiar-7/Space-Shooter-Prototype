@@ -41,7 +41,7 @@ public class WinScenario : MonoBehaviour
             PlayerPrefs.SetFloat("BestTime", bestTime);
         }
         var span = TimeSpan.FromSeconds(currentLeveltime);
-        timeToComplete.GetComponent<Text>().text = "Время прохождения:\n" + string.Format("{0:00}:{1:00}:{2:000}", (int)span.Minutes, span.Seconds, span.Milliseconds);
+        timeToComplete.GetComponent<Text>().text = "Time:\n" + string.Format("{0:00}:{1:00}:{2:000}", (int)span.Minutes, span.Seconds, span.Milliseconds);
         autor.SetActive(true);
         timeToComplete.SetActive(true);
     }

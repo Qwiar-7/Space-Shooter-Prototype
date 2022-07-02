@@ -36,12 +36,12 @@ public class ScoreManager : MonoBehaviour
             bestScore = currentScore;
             PlayerPrefs.SetInt("BestScore", bestScore);
         }
-        bestScoreText.text = "Лучший счёт: " + bestScore;
+        bestScoreText.text = "Best Score: " + bestScore;
         BestScore.SetActive(true);
     }
     public static void ShowCurrentScore()
     {
-        currentScoreText.text = "Текущий счёт: " + currentScore;
+        currentScoreText.text = "Current Score: " + currentScore;
     }
     public static void UpdateCurrentScore(int score)
     {

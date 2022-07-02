@@ -59,6 +59,7 @@ public class Hero : MonoBehaviour
     }
     private void Update()
     {
+        if (Time.timeScale == 0) return;
         Vector3 position = transform.position;
         float xAxis = Input.GetAxis("Horizontal");
         float yAxis = Input.GetAxis("Vertical");

@@ -467,9 +467,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 0
+    m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
+    m_SelectOnUp: {fileID: 1477101586}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
@@ -601,7 +601,6 @@ MonoBehaviour:
     projectileColor: {r: 1, g: 1, b: 1, a: 1}
     delayBetweenShots: 0
     velocity: 30
-    sound: {fileID: 0}
   collar: {fileID: 0}
   lastShotTime: 0
   isCharged: 0
@@ -660,7 +659,6 @@ MonoBehaviour:
     projectileColor: {r: 1, g: 1, b: 1, a: 1}
     delayBetweenShots: 0
     velocity: 20
-    sound: {fileID: 0}
   collar: {fileID: 0}
   lastShotTime: 0
   isCharged: 0
@@ -1042,7 +1040,6 @@ MonoBehaviour:
     projectileColor: {r: 1, g: 1, b: 1, a: 1}
     delayBetweenShots: 0
     velocity: 30
-    sound: {fileID: 0}
   collar: {fileID: 0}
   lastShotTime: 0
   isCharged: 0
@@ -1101,7 +1098,6 @@ MonoBehaviour:
     projectileColor: {r: 1, g: 1, b: 1, a: 1}
     delayBetweenShots: 0
     velocity: 20
-    sound: {fileID: 0}
   collar: {fileID: 0}
   lastShotTime: 0
   isCharged: 0
@@ -1193,7 +1189,6 @@ MonoBehaviour:
     projectileColor: {r: 1, g: 1, b: 1, a: 1}
     delayBetweenShots: 0
     velocity: 20
-    sound: {fileID: 0}
   collar: {fileID: 0}
   lastShotTime: 0
   isCharged: 0
@@ -1361,7 +1356,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0412\u044B\u0445\u043E\u0434"
+  m_Text: Exit
 --- !u!222 &755880048
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1440,7 +1435,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u041B\u0443\u0447\u0448\u0435\u0435 \u0432\u0440\u0435\u043C\u044F: "
+  m_Text: 'Best time: '
 --- !u!222 &813883021
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1939,7 +1934,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenuUI: {fileID: 1838211099}
+  firstSelectedButton: {fileID: 1950361386}
   isGamePaused: 0
+  isEventUsing: 0
 --- !u!114 &963194233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2218,7 +2215,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u041B\u0443\u0447\u0448\u0438\u0439 \u0441\u0447\u0451\u0442: 10000"
+  m_Text: 'Current score: 10000'
 --- !u!222 &1121990015
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2804,7 +2801,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 1
+  m_UiScaleMode: 0
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
@@ -2913,7 +2910,6 @@ MonoBehaviour:
     projectileColor: {r: 1, g: 1, b: 1, a: 1}
     delayBetweenShots: 0
     velocity: 20
-    sound: {fileID: 0}
   collar: {fileID: 0}
   lastShotTime: 0
   isCharged: 0
@@ -2990,10 +2986,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 0
+    m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_SelectOnUp: {fileID: 1950361388}
+    m_SelectOnDown: {fileID: 226978611}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 3
@@ -3125,7 +3121,6 @@ MonoBehaviour:
     projectileColor: {r: 1, g: 1, b: 1, a: 1}
     delayBetweenShots: 0
     velocity: 20
-    sound: {fileID: 0}
   collar: {fileID: 0}
   lastShotTime: 0
   isCharged: 0
@@ -3184,7 +3179,6 @@ MonoBehaviour:
     projectileColor: {r: 1, g: 1, b: 1, a: 1}
     delayBetweenShots: 0
     velocity: 20
-    sound: {fileID: 0}
   collar: {fileID: 0}
   lastShotTime: 0
   isCharged: 0
@@ -3355,8 +3349,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0420\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u0447\u0438\u043A\n\u0414\u0430\u043D\u0438\u043B
-    \u041D\u0435\u043F\u0448\u0430"
+  m_Text: 'Game creator
+
+    Danil Nepsha'
 --- !u!222 &1590422231
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3530,7 +3525,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C"
+  m_Text: Continue
 --- !u!222 &1611363703
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3785,7 +3780,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u041F\u0430\u0443\u0437\u0430"
+  m_Text: Pause
 --- !u!222 &1798189628
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3863,7 +3858,6 @@ MonoBehaviour:
     projectileColor: {r: 0.019607844, g: 0.5647059, b: 0.10588236, a: 1}
     delayBetweenShots: 0
     velocity: 0
-    sound: {fileID: 0}
   - type: 1
     letter: B
     color: {r: 0.8784314, g: 0.8784314, b: 0.8784314, a: 1}
@@ -3871,7 +3865,6 @@ MonoBehaviour:
     projectileColor: {r: 0.8784314, g: 0.8784314, b: 0.8784314, a: 1}
     delayBetweenShots: 0.2
     velocity: 50
-    sound: {fileID: 8300000, guid: f34cb45f746b8134f82cf6ad33e2b21f, type: 3}
   - type: 2
     letter: S
     color: {r: 1, g: 0.84243375, b: 0, a: 1}
@@ -3879,7 +3872,6 @@ MonoBehaviour:
     projectileColor: {r: 1, g: 0.8431373, b: 0, a: 1}
     delayBetweenShots: 0.4
     velocity: 50
-    sound: {fileID: 8300000, guid: f34cb45f746b8134f82cf6ad33e2b21f, type: 3}
   - type: 3
     letter: P
     color: {r: 0, g: 0.26784706, b: 1, a: 1}
@@ -3887,7 +3879,6 @@ MonoBehaviour:
     projectileColor: {r: 0, g: 0.26666668, b: 1, a: 1}
     delayBetweenShots: 0.5
     velocity: 30
-    sound: {fileID: 0}
   - type: 5
     letter: L
     color: {r: 1, g: 0, b: 0.029343128, a: 1}
@@ -3895,7 +3886,6 @@ MonoBehaviour:
     projectileColor: {r: 1, g: 0, b: 0.027450982, a: 1}
     delayBetweenShots: 0
     velocity: 0
-    sound: {fileID: 0}
   - type: 6
     letter: T
     color: {r: 0.67391014, g: 0, b: 1, a: 1}
@@ -3903,7 +3893,6 @@ MonoBehaviour:
     projectileColor: {r: 0.6745098, g: 0, b: 1, a: 1}
     delayBetweenShots: 0.1
     velocity: 70
-    sound: {fileID: 0}
   - type: 4
     letter: M
     color: {r: 1, g: 0.41743657, b: 0, a: 1}
@@ -3911,7 +3900,6 @@ MonoBehaviour:
     projectileColor: {r: 1, g: 0.4156863, b: 0, a: 1}
     delayBetweenShots: 0.3
     velocity: 30
-    sound: {fileID: 0}
   - type: 8
     letter: C
     color: {r: 1, g: 0, b: 0.33445168, a: 1}
@@ -3919,7 +3907,6 @@ MonoBehaviour:
     projectileColor: {r: 1, g: 0, b: 0.33333334, a: 1}
     delayBetweenShots: 0
     velocity: 0
-    sound: {fileID: 0}
   _shieldLevel: 4
   isDead: 0
 --- !u!4 &1821439378
@@ -4166,10 +4153,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 0
+    m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_SelectOnDown: {fileID: 1477101586}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 3
@@ -4336,7 +4323,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u0441\u0447\u0435\u0442: 10000"
+  m_Text: 'Current score: 10000'
 --- !u!222 &1995441223
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4496,7 +4483,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0413\u043B\u0430\u0432\u043D\u043E\u0435 \u041C\u0435\u043D\u044E"
+  m_Text: Main Menu
 --- !u!222 &2087342304
 CanvasRenderer:
   m_ObjectHideFlags: 0

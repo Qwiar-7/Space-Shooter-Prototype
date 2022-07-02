@@ -1,7 +1,8 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System;
+using UnityEngine.EventSystems;
 
 public class MainMenu : MonoBehaviour
 {
@@ -10,11 +11,15 @@ public class MainMenu : MonoBehaviour
     public GameObject BestScore;
     public GameObject mainMenu;
     public GameObject optionsMenu;
+    public GameObject firstSelectedButton;
+    public GameObject firstOptionsButton;
+    public GameObject closingOptionsButton;
 
     [Header("Set Dynamically")]
     public Text scoreGT;
     public Text bestTimeText;
     public static float bestTime;
+    public bool isEventUsing = false;
     private void Awake()
     {
         bestTimeText = BestTime.GetComponent<Text>();
@@ -22,19 +27,21 @@ public class MainMenu : MonoBehaviour
     }
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.None;
+        Cursor.lockState = CursorLockMode.Locked;
         ScoreManager.ShowBestScore();
         if (PlayerPrefs.HasKey("BestTime"))
         {
             bestTime = PlayerPrefs.GetFloat("BestTime");
             var span = TimeSpan.FromSeconds(bestTime);
-            bestTimeText.text = "Лучшее время:\n" + string.Format("{0:00}:{1:00}:{2:000}", (int)span.Minutes, span.Seconds, span.Milliseconds);
+            bestTimeText.text = "Best time:\n" + string.Format("{0:00}:{1:00}:{2:000}", (int)span.Minutes, span.Seconds, span.Milliseconds);
             BestTime.SetActive(true);
         }
         else
         {
             BestTime.SetActive(false);
         }
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(firstSelectedButton);
     }
     public void LoadLevel_0()
     {
@@ -44,12 +51,15 @@ public class MainMenu : MonoBehaviour
     {
         mainMenu.SetActive(false);
         optionsMenu.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(firstOptionsButton);
     }
     public void CloseOptions()
     {
         mainMenu.SetActive(true);
         optionsMenu.SetActive(false);
-        mainMenu.transform.GetChild(2).GetComponent<Animator>().Play("Resume_Button", -1, 0f);
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(closingOptionsButton);
     }
     public void ClearPlayerStatistics()
     {
